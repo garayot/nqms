@@ -56,5 +56,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:approver'])->prefix('approver')->name('approver.')->group(function () {
     Route::get('/drafs', [DrafApprovalController::class, 'index'])->name('drafs.index');
+    Route::get('/drafs/{draf}', [DrafApprovalController::class, 'show'])->name('drafs.show');
     Route::post('/drafs/{draf}/approve', [DrafApprovalController::class, 'approve'])->name('drafs.approve');
 });

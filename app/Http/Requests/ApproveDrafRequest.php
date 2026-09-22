@@ -22,6 +22,7 @@ class ApproveDrafRequest extends FormRequest
             'approved_at' => ['required', 'date'],
             'new_revision_number' => ['nullable', 'string', 'max:50'],
             'effectivity_date' => ['nullable', 'date'],
+            'date_registered' => ['nullable', 'date'],
             'approved_attachment' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:2048'],
         ];
     }
@@ -38,6 +39,11 @@ class ApproveDrafRequest extends FormRequest
 
         $validator->sometimes('effectivity_date', 'required|date', function ($input) {
             return ($input->approval ?? null) === ApprovalDecision::APPROVED->value;
+        });
+
+        $validator->sometimes('date_registered', 'required|date', function ($input) {
+            return ($input->approval ?? null) === ApprovalDecision::APPROVED->value
+                && ! empty($input->approved_attachment);
         });
     }
 }

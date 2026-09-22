@@ -29,6 +29,20 @@ class DrafApprovalController extends Controller
         return view('approver.drafs.index', compact('drafs'));
     }
 
+    public function show(Draf $draf)
+    {
+        $draf->load([
+            'requestedBy',
+            'reviewedBy',
+            'approvedBy',
+            'documentType',
+            'document',
+            'histories.user',
+        ]);
+
+        return view('approver.drafs.show', compact('draf'));
+    }
+
     public function approve(ApproveDrafRequest $request, Draf $draf)
     {
         $validated = $request->validated();
@@ -40,6 +54,7 @@ class DrafApprovalController extends Controller
         $draf->approved_at = $validated['approved_at'];
         $draf->new_revision_number = $validated['new_revision_number'] ?? $draf->current_revision_no;
         $draf->effectivity_date = $validated['effectivity_date'] ?? $draf->date_requested;
+        $draf->date_registered = null;
 
         if ($validated['approval'] === ApprovalDecision::APPROVED->value) {
             $draf->status = DrafStatus::APPROVED->value;
@@ -47,7 +62,7 @@ class DrafApprovalController extends Controller
             if ($request->hasFile('approved_attachment')) {
                 $path = $request->file('approved_attachment')->store('documents/final', 'public');
                 $draf->approved_attachment_path = $path;
-                $draf->date_registered = now()->toDateString();
+            $draf->date_registered = $validated['date_registered'] ?? now()->toDateString();
                 $draf->status = DrafStatus::REGISTERED->value;
                 $document = $draf->document ?? new Document();
                 $document->draf_id = $draf->id;
@@ -59,6 +74,7 @@ class DrafApprovalController extends Controller
             }
         } else {
             $draf->status = DrafStatus::APPROVAL_DISAPPROVED->value;
+            $draf->approved_attachment_path = $draf->approved_attachment_path;
         }
 
         $draf->save();
@@ -72,6 +88,6 @@ class DrafApprovalController extends Controller
             'remarks' => $validated['reason2'] ?? null,
         ]);
 
-        return redirect()->route('approver.drafs.index')->with('success', 'Approval decision recorded.');
+        return redirect()->route('approver.drafs.show', $draf)->with('success', 'Approval decision recorded.');
     }
 }
