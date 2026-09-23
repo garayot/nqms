@@ -3,13 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DocumentStatus;
+use App\Enums\DrafApplicability;
+use App\Enums\DrafSource;
 use App\Models\Document;
+use App\Models\DocumentType;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
     public function publicIndex(Request $request)
     {
+        $documentTypes = DocumentType::query()
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $sourceOptions = collect(DrafSource::cases())
+            ->mapWithKeys(fn (DrafSource $source) => [$source->value => $source->label()])
+            ->all();
+
+        $applicabilityOptions = collect(DrafApplicability::cases())
+            ->mapWithKeys(fn (DrafApplicability $applicability) => [$applicability->value => $applicability->label()])
+            ->all();
+
         $documents = Document::query()
             ->with(['draf.documentType', 'originatingOffice'])
             ->where('status', DocumentStatus::ACTIVE->value)
@@ -44,7 +60,7 @@ class DocumentController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('pages.forms-index', compact('documents'));
+        return view('pages.forms-index', compact('documents', 'documentTypes', 'sourceOptions', 'applicabilityOptions'));
     }
 
     public function index(Request $request)
@@ -67,6 +83,6 @@ class DocumentController extends Controller
     {
         $document->load(['draf.documentType', 'originatingOffice']);
 
-        return view('documents.show', compact('document')); 
+        return view('documents.show', compact('document'));
     }
 }
