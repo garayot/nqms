@@ -1,4 +1,4 @@
-<header class="border-b border-slate-200 bg-white/95 backdrop-blur">
+<header class="border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0f3d68] text-sm font-bold text-white">DepEd</div>
@@ -8,14 +8,14 @@
             </div>
         </a>
 
-        <div class="hidden items-center gap-6 text-sm font-medium text-slate-700 md:flex">
-            <a href="{{ route('home') }}" class="hover:text-[#0f3d68]">Home</a>
-            <a href="{{ route('forms.index') }}" class="hover:text-[#0f3d68]">Forms and Templates</a>
-            <a href="{{ route('links') }}" class="hover:text-[#0f3d68]">Links</a>
-            <a href="{{ route('organization') }}" class="hover:text-[#0f3d68]">Organization</a>
+        <div class="hidden items-center gap-3 text-sm font-medium text-slate-700 md:flex">
+            <a href="{{ route('home') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Home</a>
+            <a href="{{ route('forms.index') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Forms and Templates</a>
+            <a href="{{ route('links') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Links</a>
+            <a href="{{ route('organization') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Organization</a>
             @auth
-                <a href="{{ route('dashboard') }}" class="hover:text-[#0f3d68]">Dashboard</a>
-                <a href="{{ route('draf.index') }}" class="hover:text-[#0f3d68]">DRAF / Document Management</a>
+                <a href="{{ route('dashboard') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Dashboard</a>
+                <a href="{{ route('draf.index') }}" class="rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">DRAF / Document Management</a>
             @endauth
         </div>
 

@@ -6,4 +6,95 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-700: #0f3d68;
+    --color-brand-800: #0b2f52;
+    --color-secondary-500: #0ea5a4;
+    --color-secondary-600: #0b8b8a;
+}
+
+@keyframes float-gentle {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@layer base {
+    body {
+        background: radial-gradient(circle at top right, #ccfbf1 0%, #f1f5f9 34%, #e2e8f0 100%);
+    }
+
+    a,
+    button,
+    input,
+    select,
+    textarea {
+        transition: color 180ms ease, background-color 220ms ease, border-color 220ms ease, transform 220ms ease,
+            box-shadow 220ms ease;
+    }
+}
+
+@layer components {
+    .bg-\[\#0f3d68\] {
+        background-color: var(--color-brand-700) !important;
+    }
+
+    .hover\:bg-\[\#0b2f52\]:hover {
+        background-color: var(--color-brand-800) !important;
+    }
+
+    .text-\[\#0f3d68\] {
+        color: var(--color-brand-700) !important;
+    }
+
+    .hover\:text-\[\#0f3d68\]:hover {
+        color: var(--color-secondary-600) !important;
+    }
+
+    .focus\:border-\[\#0f3d68\]:focus {
+        border-color: var(--color-secondary-500) !important;
+        box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.15);
+    }
+
+    .font-semibold.text-\[\#0f3d68\] {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border: 1px solid rgba(15, 61, 104, 0.2);
+        border-radius: 0.45rem;
+        padding: 0.25rem 0.55rem;
+        background-color: rgba(15, 61, 104, 0.04);
+    }
+
+    .font-semibold.text-\[\#0f3d68\]:hover {
+        border-color: rgba(14, 165, 164, 0.45);
+        background-color: rgba(14, 165, 164, 0.14);
+        transform: translateY(-1px);
+    }
+
+    .font-semibold.text-\[\#0f3d68\]::after {
+        content: '↗';
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .shadow-sm:hover {
+        transform: translateY(-2px);
+    }
+
+    .ambient-float {
+        animation: float-gentle 6s ease-in-out infinite;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ambient-float,
+    .shadow-sm:hover {
+        animation: none;
+        transform: none;
+    }
 }
