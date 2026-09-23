@@ -8,12 +8,15 @@ use App\Enums\DrafRequestType;
 use App\Enums\DrafSource;
 use App\Enums\DrafStatus;
 use App\Enums\ReviewDecision;
+use App\Models\Concerns\HasEncryptedRouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Draf extends Model
 {
+    use HasEncryptedRouteKey;
+
     protected $fillable = [
         'draf_number',
         'source',
