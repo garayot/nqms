@@ -7,10 +7,51 @@
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Public Repository</p>
                 <h1 class="mt-2 text-3xl font-bold text-slate-900">Forms and Templates</h1>
             </div>
-            <form method="GET" class="w-full max-w-md">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search title or reference code" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none ring-0 focus:border-[#0f3d68]">
-            </form>
         </div>
+
+        <form method="GET" class="mb-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="xl:col-span-2">
+                    <label for="search" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Search</label>
+                    <input id="search" type="text" name="search" value="{{ request('search') }}" placeholder="Search title or reference code" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                </div>
+
+                <div>
+                    <label for="document_type" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Document Type</label>
+                    <select id="document_type" name="document_type" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All document types</option>
+                        @foreach ($documentTypes as $type)
+                            <option value="{{ $type->id }}" @selected((string) request('document_type') === (string) $type->id)>{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="source" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Source</label>
+                    <select id="source" name="source" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All sources</option>
+                        @foreach ($sourceOptions as $value => $label)
+                            <option value="{{ $value }}" @selected(request('source') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="applicability" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Applicability</label>
+                    <select id="applicability" name="applicability" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All applicability</option>
+                        @foreach ($applicabilityOptions as $value => $label)
+                            <option value="{{ $value }}" @selected(request('applicability') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-3">
+                <button type="submit" class="inline-flex rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Apply Filters</button>
+                <a href="{{ url()->current() }}" class="inline-flex rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">Reset</a>
+            </div>
+        </form>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @forelse ($documents as $document)
