@@ -95,7 +95,7 @@ class DrafController extends Controller
         $draf->status = DrafStatus::SUBMITTED->value;
         $draf->save();
 
-        $this->recordHistory($draf, 'Submitted', $oldStatus, $draf->status->value, 'DRAF submitted for review.');
+        $this->recordHistory($draf, 'Submitted', $oldStatus, $draf->status?->value ?? DrafStatus::SUBMITTED->value, 'DRAF submitted for review.');
 
         return redirect()->route('draf.show', $draf)->with('success', 'DRAF submitted for review.');
     }

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Enums\DocumentStatus;
+use App\Models\Concerns\HasEncryptedRouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Document extends Model
 {
+    use HasEncryptedRouteKey;
+
     protected $fillable = [
         'draf_id',
         'originating_office_id',
