@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewDrafRequest;
 use App\Models\Draf;
 use App\Models\DrafHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,6 +38,16 @@ class DrafManagementController extends Controller
         $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document', 'histories.user']);
 
         return view('admin.drafs.show', compact('draf'));
+    }
+
+    public function print(Draf $draf)
+    {
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+
+        $pdf = Pdf::loadView('draf.print-form', compact('draf'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('draf-form-'.$draf->draf_number.'.pdf');
     }
 
     public function review(ReviewDrafRequest $request, Draf $draf)

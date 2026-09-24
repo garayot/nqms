@@ -8,7 +8,10 @@
                     <div class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Review</div>
                     <h1 class="mt-2 text-3xl font-bold text-slate-900">{{ $draf->title }}</h1>
                 </div>
-                <x-status-badge :status="$draf->status?->value ?? 'draft'" />
+                <div class="flex items-center gap-3">
+                    <x-status-badge :status="$draf->status?->value ?? 'draft'" />
+                    <a href="{{ route('admin.drafs.print', $draf) }}" target="_blank" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700">Print DRAF Form</a>
+                </div>
             </div>
         </div>
 

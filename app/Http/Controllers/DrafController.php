@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateDrafRequest;
 use App\Models\DocumentType;
 use App\Models\Draf;
 use App\Models\DrafHistory;
-use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,6 +55,18 @@ class DrafController extends Controller
         $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document']);
 
         return view('draf.show', compact('draf'));
+    }
+
+    public function print(Draf $draf)
+    {
+        $this->authorize('view', $draf);
+
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+
+        $pdf = Pdf::loadView('draf.print-form', compact('draf'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('draf-form-'.$draf->draf_number.'.pdf');
     }
 
     public function edit(Draf $draf)

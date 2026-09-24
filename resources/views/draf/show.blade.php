@@ -10,6 +10,7 @@
                 </div>
                 <div class="flex gap-3">
                     <x-status-badge :status="$draf->status?->value ?? 'draft'" />
+                    <a href="{{ route('draf.print', $draf) }}" target="_blank" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700">Print DRAF Form</a>
                     @if (auth()->user()->id === $draf->requested_by && $draf->isEditable())
                         <a href="{{ route('draf.edit', $draf) }}" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700">Edit</a>
                     @endif
