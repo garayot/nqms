@@ -7,9 +7,8 @@
     $reviewerName = $draf->reviewedBy?->name ?? '___________________________';
     $approverName = $draf->approvedBy?->name ?? '___________________________';
 
-    $headerLogoPath = storage_path('app/public/logo/deped logo.png');
-    $footerLogoPath = storage_path('app/public/logo/Footer Logo.png');
-    $fontPath = storage_path('app/public/font/CanterburyRegular.ttf');
+    $headerLogoPath = storage_path('app/public/logo/header.png');
+    $footerLogoPath = storage_path('app/public/logo/footer.png');
 
     $headerLogo = file_exists($headerLogoPath)
         ? 'data:image/png;base64,' . base64_encode(file_get_contents($headerLogoPath))
@@ -19,7 +18,6 @@
         ? 'data:image/png;base64,' . base64_encode(file_get_contents($footerLogoPath))
         : null;
 
-    $fontUrlPath = file_exists($fontPath) ? $fontPath : null;
 @endphp
 
 <!DOCTYPE html>
@@ -48,12 +46,11 @@
             padding: 0;
         }
 
-        .pdf-header {
+        .page-wrapper {
             width: 100%;
-            background: #ffffff;
-            border-bottom: 2px solid #111827;
-            padding-top: 8px;
+            box-sizing: border-box;
         }
+
 
         .gov-header {
             text-align: center;
@@ -69,16 +66,15 @@
         }
 
         .gov-header img {
-            width: 54px;
-            height: 54px;
+            width: 310px;
+            height: 204px;
+            margin-bottom: -10px;
         }
 
         .gov-title {
-            font-family: 'Canterbury', serif;
+            font-family: 'Canterbury';
             font-size: 28px;
-            line-height: 1.1;
             color: #1f2937;
-            letter-spacing: 0.5px;
         }
 
         .gov-sub {
@@ -90,53 +86,62 @@
             color: #1f2937;
         }
 
+        .header-divider {
+            border: none;
+            border-top: 1.5px solid #1e3a5f;
+            margin: 3mm 0 2mm;
+        }
+
+        .footer-divider {
+            border: 0;
+            border-top: 1.5px solid #000;
+            width: 96%;
+            margin: 0 auto 8px auto;
+        }
+
         .pdf-footer {
             width: 100%;
-            background: #ffffff;
-            border-top: 2px solid #111827;
-            padding: 8px 0 0 0;
+            background: #fff;
+            padding: 8px 18px 0 18px;
             margin-top: 8px;
+            box-sizing: border-box;
+            page-break-inside: avoid;
         }
 
-        .footer-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 0 18px 8px 18px;
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .footer-table td {
+            border: none;
+            padding: 0;
+            vertical-align: middle;
         }
 
-        .footer-left img {
-            width: 42px;
-            height: 42px;
+        .footer-logo-cell {
+            width: 50px;
+            padding-right: 10px;
         }
 
-        .footer-text {
-            font-size: 8px;
-            line-height: 1.2;
-            color: #1f2937;
-            text-transform: uppercase;
-            font-weight: 700;
+        .footer-logo-cell img {
+            width: 90%;
+            height: 82px;
+            margin-top: -10px;
+            margin-left: 5px;
+            display: block;
+        }
+
+        .footer-meta-cell {
+            vertical-align: top;
         }
 
         .meta-table {
-            width: 53%;
+            width: 100%;
             border-collapse: collapse;
+            flex: left;
             font-size: 9px;
             table-layout: fixed;
-        }
-
-        .meta-table td {
-            border: 1px solid #111827;
-            padding: 5px 6px;
-            vertical-align: top;
-            line-height: 1.2;
         }
 
         .meta-table .meta-label {
@@ -160,6 +165,8 @@
             padding: 5px 6px;
             vertical-align: top;
             line-height: 1.35;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .section-label {
@@ -191,16 +198,24 @@
         }
 
         .inline {
-            white-space: nowrap;
+            white-space: normal;
             display: inline-flex;
-            align-items: center;
+            align-items: flex-start;
             margin-right: 10px;
+            max-width: 100%;
+            vertical-align: top;
+            gap: 4px;
+        }
+
+        .inline .checkbox {
+            flex-shrink: 0;
         }
 
         .fill {
             min-height: 18px;
             display: block;
             word-wrap: break-word;
+            overflow-wrap: anywhere;
         }
 
         .signature {
@@ -219,19 +234,15 @@
     </style>
 </head>
 <body>
-    <div class="pdf-header">
+    <div class="page-wrapper">
+    
         <div class="gov-header">
             <div class="top-row">
                 <img src="{{ $headerLogo }}" alt="DepEd Logo">
-                <div>
-                    <div class="gov-title">Republic of the Philippines</div>
-                    <div class="gov-title" style="font-size: 26px;">Department of Education</div>
-                    <div class="gov-sub">CARAGA REGION</div>
-                    <div class="gov-sub" style="letter-spacing: 0.04em; font-size: 9px;">Schools Division Office of Bislig City</div>
-                </div>
+                
             </div>
         </div>
-    </div>
+    
 
     <div class="page">
         <table>
@@ -348,11 +359,11 @@
             </tr>
             <tr>
                 <td colspan="6" class="signature">
-                    <div class="fill">Lead, Knowledge Management Team</div>
+                    <div class="fill">_______________________________________</div>
                     <div class="small">Lead, Knowledge Management Team</div>
                 </td>
                 <td colspan="8" class="signature">
-                    <div class="fill">Process Holder</div>
+                    <div class="fill">_______________________________________</div>
                     <div class="small">Process Holder</div>
                 </td>
             </tr>
@@ -362,32 +373,20 @@
             </tr>
         </table>
     </div>
+    
 
     <div class="pdf-footer">
-        <div class="footer-row">
-            <div class="footer-left">
-                <img src="{{ $footerLogo }}" alt="DepEd Footer Logo">
-                <div class="footer-text">Republic of the Philippines<br>Department of Education<br>CARAGA REGION</div>
-            </div>
-            <table class="meta-table">
-                <tr>
-                    <td class="meta-label">Address:</td>
-                    <td>Villa Josefa Subdivision, Government Complex, Poblacion, Bislig City</td>
-                </tr>
-                <tr>
-                    <td class="meta-label">Telephone No.:</td>
-                    <td>(086) 645-5345</td>
-                </tr>
-                <tr>
-                    <td class="meta-label">E-mail Address:</td>
-                    <td>bislig.city@deped.gov.ph</td>
-                </tr>
-                <tr>
-                    <td class="meta-label">Website:</td>
-                    <td>depedbisligcity.org</td>
-                </tr>
-            </table>
-        </div>
+        <table class="footer-table">
+            <tr>
+                <td class="footer-logo-cell">
+                    <img src="{{ $footerLogo }}" alt="DepEd Footer Logo">
+                </td>
+                
+            </tr>
+        </table>
     </div>
+
+    </div>
+
 </body>
 </html>
