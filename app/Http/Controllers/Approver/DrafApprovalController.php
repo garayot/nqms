@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Approver;
 
 use App\Enums\ApprovalDecision;
-use App\Enums\DrafStatus;
 use App\Enums\DocumentStatus;
+use App\Enums\DrafStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApproveDrafRequest;
 use App\Models\Document;
 use App\Models\Draf;
 use App\Models\DrafHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class DrafApprovalController extends Controller
 {
@@ -43,6 +43,16 @@ class DrafApprovalController extends Controller
         return view('approver.drafs.show', compact('draf'));
     }
 
+    public function print(Draf $draf)
+    {
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+
+        $pdf = Pdf::loadView('draf.print-form', compact('draf'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('draf-form-'.$draf->draf_number.'.pdf');
+    }
+
     public function approve(ApproveDrafRequest $request, Draf $draf)
     {
         $validated = $request->validated();
@@ -62,9 +72,9 @@ class DrafApprovalController extends Controller
             if ($request->hasFile('approved_attachment')) {
                 $path = $request->file('approved_attachment')->store('documents/final', 'public');
                 $draf->approved_attachment_path = $path;
-            $draf->date_registered = $validated['date_registered'] ?? now()->toDateString();
+                $draf->date_registered = $validated['date_registered'] ?? now()->toDateString();
                 $draf->status = DrafStatus::REGISTERED->value;
-                $document = $draf->document ?? new Document();
+                $document = $draf->document ?? new Document;
                 $document->draf_id = $draf->id;
                 $document->originating_office_id = $draf->requestedBy?->id;
                 $document->status = DocumentStatus::ACTIVE->value;

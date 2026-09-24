@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\DocumentTypeController;
+use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WhitelistController;
 use App\Http\Controllers\Approver\DrafApprovalController;
@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('draf', DrafController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
+    Route::get('/draf/{draf}/print', [DrafController::class, 'print'])->name('draf.print');
     Route::post('/draf/{draf}/submit', [DrafController::class, 'submit'])->name('draf.submit');
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/drafs', [DrafManagementController::class, 'index'])->name('drafs.index');
     Route::get('/drafs/{draf}', [DrafManagementController::class, 'show'])->name('drafs.show');
+    Route::get('/drafs/{draf}/print', [DrafManagementController::class, 'print'])->name('drafs.print');
     Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
 
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
@@ -57,5 +59,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:approver'])->prefix('approver')->name('approver.')->group(function () {
     Route::get('/drafs', [DrafApprovalController::class, 'index'])->name('drafs.index');
     Route::get('/drafs/{draf}', [DrafApprovalController::class, 'show'])->name('drafs.show');
+    Route::get('/drafs/{draf}/print', [DrafApprovalController::class, 'print'])->name('drafs.print');
     Route::post('/drafs/{draf}/approve', [DrafApprovalController::class, 'approve'])->name('drafs.approve');
 });
