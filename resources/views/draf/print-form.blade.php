@@ -180,21 +180,16 @@
         }
 
         .checkbox {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 12px;
-            height: 12px;
-            border: 1.5px solid #111827;
-            background: #ffffff;
-            color: #111827;
-            font-size: 10px;
-            font-weight: 900;
-            line-height: 1;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1px solid #000;
             text-align: center;
-            margin-right: 6px;
+            line-height: 13px;
+            font-family: "DejaVu Sans", sans-serif;
+            font-size: 11px;
             vertical-align: middle;
-            padding: 0;
+            margin-right: 4px;
         }
 
         .inline {
@@ -312,10 +307,10 @@
                 <td colspan="7" class="section-label">Section III – Approval</td>
             </tr>
             <tr>
-                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '✓' : '' }}</span>Recommend Approval</span></td>
-                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
-                <td colspan="5"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '✓' : '' }}</span>Approved</span></td>
-                <td colspan="2"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '✓' : '' }}</span>Recommend Approval</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '✓' : '' }}</span>Approved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
             </tr>
             <tr>
                 <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
