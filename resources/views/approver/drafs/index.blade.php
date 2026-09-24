@@ -24,16 +24,7 @@
                             <td class="px-4 py-3">{{ $draf->requestedBy?->name }}</td>
                             <td class="px-4 py-3"><x-status-badge :status="$draf->status?->value ?? 'draft'" /></td>
                             <td class="px-4 py-3">
-                                <form method="POST" action="{{ route('approver.drafs.approve', $draf) }}" class="flex gap-2">
-                                    @csrf
-                                    <select name="approval" class="rounded-lg border border-slate-300 px-2 py-2 text-sm">
-                                        <option value="approved">Approved</option>
-                                        <option value="disapproved">Disapproved</option>
-                                    </select>
-                                    <input type="hidden" name="approved_by" value="{{ auth()->id() }}">
-                                    <input type="hidden" name="approved_at" value="{{ now()->toDateTimeString() }}">
-                                    <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Apply</button>
-                                </form>
+                                <a href="{{ route('approver.drafs.show', $draf) }}" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">View Details</a>
                             </td>
                         </tr>
                     @empty
