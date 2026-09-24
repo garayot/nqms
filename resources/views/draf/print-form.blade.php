@@ -6,6 +6,20 @@
     $requesterName = $draf->requestedBy?->name ?? '___________________________';
     $reviewerName = $draf->reviewedBy?->name ?? '___________________________';
     $approverName = $draf->approvedBy?->name ?? '___________________________';
+
+    $headerLogoPath = storage_path('app/public/logo/deped logo.png');
+    $footerLogoPath = storage_path('app/public/logo/Footer Logo.png');
+    $fontPath = storage_path('app/public/font/CanterburyRegular.ttf');
+
+    $headerLogo = file_exists($headerLogoPath)
+        ? 'data:image/png;base64,' . base64_encode(file_get_contents($headerLogoPath))
+        : null;
+
+    $footerLogo = file_exists($footerLogoPath)
+        ? 'data:image/png;base64,' . base64_encode(file_get_contents($footerLogoPath))
+        : null;
+
+    $fontUrlPath = file_exists($fontPath) ? $fontPath : null;
 @endphp
 
 <!DOCTYPE html>
@@ -15,8 +29,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>DRAF Form</title>
     <style>
+        @font-face {
+            font-family: 'Canterbury';
+            src: url('/font/CanterburyRegular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         @page {
-            margin: 20mm 10mm 24mm 10mm;
+            margin: 0;
         }
 
         body {
@@ -28,44 +49,104 @@
         }
 
         .pdf-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 18mm;
-            padding: 4mm 10mm 0 10mm;
-            border-bottom: 1px solid #cbd5e1;
-            background: #f8fafc;
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #0f172a;
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 2px solid #111827;
+            padding-top: 8px;
         }
 
-        .pdf-header .title {
-            font-size: 15px;
-            letter-spacing: 0.08em;
-            margin-top: 2mm;
+        .gov-header {
+            text-align: center;
+            padding: 8px 20px 0 20px;
+        }
+
+        .gov-header .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 4px;
+        }
+
+        .gov-header img {
+            width: 54px;
+            height: 54px;
+        }
+
+        .gov-title {
+            font-family: 'Canterbury', serif;
+            font-size: 28px;
+            line-height: 1.1;
+            color: #1f2937;
+            letter-spacing: 0.5px;
+        }
+
+        .gov-sub {
+            margin-top: 2px;
+            font-size: 10px;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #1f2937;
         }
 
         .pdf-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 16mm;
-            padding: 2mm 10mm 0 10mm;
-            border-top: 1px solid #cbd5e1;
-            background: #f8fafc;
+            width: 100%;
+            background: #ffffff;
+            border-top: 2px solid #111827;
+            padding: 8px 0 0 0;
+            margin-top: 8px;
+        }
+
+        .footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 0 18px 8px 18px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-left img {
+            width: 42px;
+            height: 42px;
+        }
+
+        .footer-text {
+            font-size: 8px;
+            line-height: 1.2;
+            color: #1f2937;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .meta-table {
+            width: 53%;
+            border-collapse: collapse;
             font-size: 9px;
-            color: #475569;
-            text-align: center;
+            table-layout: fixed;
+        }
+
+        .meta-table td {
+            border: 1px solid #111827;
+            padding: 5px 6px;
+            vertical-align: top;
+            line-height: 1.2;
+        }
+
+        .meta-table .meta-label {
+            font-weight: 700;
+            width: 28%;
         }
 
         .page {
-            margin-top: 24mm;
-            margin-bottom: 18mm;
+            margin: 0;
+            padding: 18px 14px 12px 14px;
         }
 
         table {
@@ -92,19 +173,28 @@
         }
 
         .checkbox {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 12px;
             height: 12px;
-            border: 1px solid #111827;
+            border: 1.5px solid #111827;
+            background: #ffffff;
+            color: #111827;
             font-size: 10px;
-            line-height: 10px;
+            font-weight: 900;
+            line-height: 1;
             text-align: center;
-            margin-right: 4px;
+            margin-right: 6px;
             vertical-align: middle;
+            padding: 0;
         }
 
         .inline {
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 10px;
         }
 
         .fill {
@@ -126,22 +216,21 @@
         .text-area {
             min-height: 56px;
         }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
     </style>
 </head>
 <body>
     <div class="pdf-header">
-        <div>Document Review and Approval Form (DRAF)</div>
-        <div class="title">DRAF No. {{ $draf->draf_number ?: '________________' }}</div>
-    </div>
-
-    <div class="pdf-footer">
-        Generated on {{ now()->format('F d, Y') }} · This document is for internal review and approval records only.
+        <div class="gov-header">
+            <div class="top-row">
+                <img src="{{ $headerLogo }}" alt="DepEd Logo">
+                <div>
+                    <div class="gov-title">Republic of the Philippines</div>
+                    <div class="gov-title" style="font-size: 26px;">Department of Education</div>
+                    <div class="gov-sub">CARAGA REGION</div>
+                    <div class="gov-sub" style="letter-spacing: 0.04em; font-size: 9px;">Schools Division Office of Bislig City</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="page">
@@ -153,37 +242,32 @@
             <tr>
                 <td colspan="4"><span class="label">Request for:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '☑' : '☐' }}</span>Creation</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '☑' : '☐' }}</span>Revision</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '☑' : '☐' }}</span>Disposition/Deletion</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '✓' : '' }}</span>Creation</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '✓' : '' }}</span>Revision</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '✓' : '' }}</span>Disposition/Deletion</span>
                 </td>
             </tr>
             <tr>
                 <td colspan="4"><span class="label">Document Type:</span></td>
                 <td colspan="10">
                     @php
-                        $docTypes = $draf->documentType?->name ?? null;
+                        $docName = strtolower((string) ($draf->documentType?->name ?? ''));
                     @endphp
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'form') || str_contains(strtolower((string) $docTypes), 'template') ? '☑' : '☐' }}</span>Form/Template</div>
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'qms') ? '☑' : '☐' }}</span>QMS Manual</div>
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'pawim') ? '☑' : '☐' }}</span>PAWIM</div>
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'planning') || str_contains(strtolower((string) $docTypes), 'swot') || str_contains(strtolower((string) $docTypes), 'risk') || str_contains(strtolower((string) $docTypes), 'opcr') ? '☑' : '☐' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</div>
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'operations') || str_contains(strtolower((string) $docTypes), 'manual') ? '☑' : '☐' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</div>
-                    <div><span class="checkbox">{{ str_contains(strtolower((string) $docTypes), 'quality') || str_contains(strtolower((string) $docTypes), 'control') ? '☑' : '☐' }}</span>Quality Control Plan</div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '✓' : '' }}</span>Form/Template</span></div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '✓' : '' }}</span>QMS Manual</span></div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '✓' : '' }}</span>PAWIM</span></div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '✓' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span></div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '✓' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span></div>
+                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '✓' : '' }}</span>Quality Control Plan</span></div>
                 </td>
             </tr>
             <tr>
                 <td colspan="4"><span class="label">Applicability:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '☑' : '☐' }}</span>CO</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '☑' : '☐' }}</span>RO</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '☑' : '☐' }}</span>SDO</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '☑' : '☐' }}</span>School</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '✓' : '' }}</span>CO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '✓' : '' }}</span>RO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '✓' : '' }}</span>SDO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '✓' : '' }}</span>School</span>
                 </td>
             </tr>
             <tr>
@@ -217,10 +301,10 @@
                 <td colspan="7" class="section-label">Section III – Approval</td>
             </tr>
             <tr>
-                <td colspan="3"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '☑' : '☐' }}</span>Recommend Approval</td>
-                <td colspan="4"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '☑' : '☐' }}</span>Disapproved</td>
-                <td colspan="5"><span class="checkbox">{{ $approvalValue === 'approved' ? '☑' : '☐' }}</span>Approved</td>
-                <td colspan="2"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '☑' : '☐' }}</span>Disapproved</td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '✓' : '' }}</span>Recommend Approval</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
+                <td colspan="5"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '✓' : '' }}</span>Approved</span></td>
+                <td colspan="2"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
             </tr>
             <tr>
                 <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
@@ -277,6 +361,33 @@
                 <td colspan="8"><span class="label">Date:</span></td>
             </tr>
         </table>
+    </div>
+
+    <div class="pdf-footer">
+        <div class="footer-row">
+            <div class="footer-left">
+                <img src="{{ $footerLogo }}" alt="DepEd Footer Logo">
+                <div class="footer-text">Republic of the Philippines<br>Department of Education<br>CARAGA REGION</div>
+            </div>
+            <table class="meta-table">
+                <tr>
+                    <td class="meta-label">Address:</td>
+                    <td>Villa Josefa Subdivision, Government Complex, Poblacion, Bislig City</td>
+                </tr>
+                <tr>
+                    <td class="meta-label">Telephone No.:</td>
+                    <td>(086) 645-5345</td>
+                </tr>
+                <tr>
+                    <td class="meta-label">E-mail Address:</td>
+                    <td>bislig.city@deped.gov.ph</td>
+                </tr>
+                <tr>
+                    <td class="meta-label">Website:</td>
+                    <td>depedbisligcity.org</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
 </html>
