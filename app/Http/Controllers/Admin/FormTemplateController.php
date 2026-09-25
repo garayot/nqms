@@ -37,6 +37,11 @@ class FormTemplateController extends Controller
             ->paginate(8, ['*'], 'registered_documents')
             ->withQueryString();
 
+        $importedReferenceCodes = FormTemplate::query()
+            ->pluck('document_reference_code')
+            ->filter()
+            ->all();
+
         $documentTypes = DocumentType::query()
             ->active()
             ->orderBy('name')
@@ -46,7 +51,7 @@ class FormTemplateController extends Controller
             ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
             ->all();
 
-        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments'));
+        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments', 'importedReferenceCodes'));
     }
 
     public function store(Request $request)

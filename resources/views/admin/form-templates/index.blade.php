@@ -24,8 +24,8 @@
                     </select>
                 </div>
                 <div class="md:col-span-3 flex flex-wrap gap-3">
-                    <button type="submit" class="rounded-md bg-[#0f3d68] px-4 py-2.5 text-sm font-semibold text-white">Apply Filters</button>
-                    <a href="{{ route('admin.form-templates.index') }}" class="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700">Reset</a>
+                    <button type="submit" class="rounded-lg bg-[#0f3d68] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0b2f52]">Apply Filters</button>
+                    <a href="{{ route('admin.form-templates.index') }}" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Reset</a>
                 </div>
             </form>
         </div>
@@ -79,12 +79,15 @@
                     <input type="file" name="downloadable_attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
                 </div>
                 <div class="md:col-span-2">
-                    <button type="submit" class="rounded-md bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white">Save Form / Template</button>
+                    <button type="submit" class="rounded-lg bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0b2f52]">Save Form / Template</button>
                 </div>
             </form>
         </div>
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-4 flex items-center justify-between gap-4">
+                <h2 class="text-xl font-semibold text-slate-900">Repository List</h2>
+            </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
                     <thead class="bg-slate-50">
@@ -105,15 +108,26 @@
                             <tr>
                                 <td class="px-4 py-3">{{ $template->document_reference_code }}</td>
                                 <td class="px-4 py-3">{{ $template->documentType?->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $template->doc_title }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <span>{{ $template->doc_title }}</span>
+                                        @if (in_array($template->document_reference_code, $importedReferenceCodes, true))
+                                            <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-700">Imported</span>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-4 py-3">{{ $template->responsible }}</td>
                                 <td class="px-4 py-3">{{ $template->revision_number ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $template->effectivity_date?->format('M d, Y') ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $template->document_location ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $template->status->label() }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="rounded-full {{ $template->status->value === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }} px-2.5 py-1 text-xs font-semibold">
+                                        {{ $template->status->label() }}
+                                    </span>
+                                </td>
                                 <td class="px-4 py-3">
                                     @if ($template->downloadable_attachment_path)
-                                        <a href="{{ Storage::url($template->downloadable_attachment_path) }}" target="_blank" class="font-semibold text-[#0f3d68]">View file</a>
+                                        <a href="{{ Storage::url($template->downloadable_attachment_path) }}" target="_blank" class="inline-flex rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-[#0f3d68] hover:bg-slate-50">View file</a>
                                     @else
                                         <span class="text-slate-500">None</span>
                                     @endif
@@ -157,15 +171,28 @@
                         @forelse ($registeredDocuments as $document)
                             <tr>
                                 <td class="px-4 py-3">{{ $document->draf?->reference_code ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $document->draf?->title ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <span>{{ $document->draf?->title ?? 'N/A' }}</span>
+                                        @if (in_array($document->draf?->reference_code, $importedReferenceCodes, true))
+                                            <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-700">Imported</span>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-4 py-3">{{ $document->draf?->documentType?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $document->location ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $document->status->label() }}</td>
                                 <td class="px-4 py-3">
-                                    @if ($document->draf?->reference_code)
+                                    <span class="rounded-full {{ $document->status->value === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }} px-2.5 py-1 text-xs font-semibold">
+                                        {{ $document->status->label() }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if (in_array($document->draf?->reference_code, $importedReferenceCodes, true))
+                                        <span class="inline-flex rounded-lg bg-emerald-100 px-3 py-2 text-xs font-semibold text-emerald-700">Already imported</span>
+                                    @elseif ($document->draf?->reference_code)
                                         <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
                                             @csrf
-                                            <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Import to Repository</button>
+                                            <button type="submit" class="rounded-lg bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white hover:bg-[#0b2f52]">Import to Repository</button>
                                         </form>
                                     @else
                                         <span class="text-slate-500">Unavailable</span>

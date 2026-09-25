@@ -123,6 +123,12 @@ class FormTemplateRepositoryTest extends TestCase
             ->assertOk()
             ->assertSee('Sample Manual Addition')
             ->assertSee('2137');
+
+        $this->actingAs($admin)
+            ->get(route('admin.form-templates.index'))
+            ->assertOk()
+            ->assertSee('Imported')
+            ->assertSee('Already imported');
     }
 
     public function test_admin_form_template_page_lists_registered_documents_for_import(): void
