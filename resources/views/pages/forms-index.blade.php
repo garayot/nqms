@@ -51,7 +51,12 @@
                     </dl>
                     <div class="mt-5">
                         @if ($document->downloadable_attachment_path)
-                            <a href="{{ Storage::url($document->downloadable_attachment_path) }}" target="_blank" class="inline-flex rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Download</a>
+                            @php
+                                $attachmentLink = \Illuminate\Support\Str::startsWith($document->downloadable_attachment_path, ['http://', 'https://'])
+                                    ? $document->downloadable_attachment_path
+                                    : Storage::url($document->downloadable_attachment_path);
+                            @endphp
+                            <a href="{{ $attachmentLink }}" target="_blank" class="inline-flex rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Download</a>
                         @else
                             <span class="text-sm text-slate-500">No downloadable file available</span>
                         @endif

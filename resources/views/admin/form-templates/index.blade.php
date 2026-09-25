@@ -3,10 +3,20 @@
 @section('content')
     <div class="space-y-6">
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="mb-2">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Admin Module</p>
-                <h1 class="mt-2 text-3xl font-bold text-slate-900">Forms / Templates</h1>
-                <p class="mt-2 text-sm text-slate-600">Add and manage existing forms and templates for the public repository.</p>
+            <div class="mb-2 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Admin Module</p>
+                    <h1 class="mt-2 text-3xl font-bold text-slate-900">Forms / Templates</h1>
+                    <p class="mt-2 text-sm text-slate-600">Add and manage existing forms and templates for the public repository.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.form-templates.csv-template') }}" class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                        Download CSV Template
+                    </a>
+                    <button type="button" onclick="document.getElementById('csv-import-dialog').showModal()" class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                        Upload CSV
+                    </button>
+                </div>
             </div>
 
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-3">
@@ -76,7 +86,12 @@
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Downloadable Attachment</label>
-                    <input type="file" name="downloadable_attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
+                    <input type="file" name="downloadable_attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <p class="mt-1 text-xs text-slate-500">Upload a file or provide a URL below.</p>
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Downloadable Attachment URL</label>
+                    <input type="url" name="downloadable_attachment_url" value="{{ old('downloadable_attachment_url') }}" placeholder="https://example.com/file.pdf" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
                 </div>
                 <div class="md:col-span-2">
                     <button type="submit" class="rounded-lg bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0b2f52]">Save Form / Template</button>
@@ -127,7 +142,12 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     @if ($template->downloadable_attachment_path)
-                                        <a href="{{ Storage::url($template->downloadable_attachment_path) }}" target="_blank" class="inline-flex rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-[#0f3d68] hover:bg-slate-50">View file</a>
+                                        @php
+                                            $attachmentLink = \Illuminate\Support\Str::startsWith($template->downloadable_attachment_path, ['http://', 'https://'])
+                                                ? $template->downloadable_attachment_path
+                                                : Storage::url($template->downloadable_attachment_path);
+                                        @endphp
+                                        <a href="{{ $attachmentLink }}" target="_blank" class="inline-flex rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-[#0f3d68] hover:bg-slate-50">View file</a>
                                     @else
                                         <span class="text-slate-500">None</span>
                                     @endif
@@ -212,5 +232,30 @@
                 {{ $registeredDocuments->links() }}
             </div>
         </div>
+
+        <dialog id="csv-import-dialog" class="w-full max-w-lg rounded-2xl border border-slate-200 p-0 shadow-xl backdrop:bg-slate-900/40">
+            <div class="p-6">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                    <h3 class="text-xl font-semibold text-slate-900">Upload CSV for Bulk Import</h3>
+                    <button type="button" onclick="document.getElementById('csv-import-dialog').close()" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Close</button>
+                </div>
+
+                <p class="mb-2 text-sm text-slate-600">Required columns: document_type or document_type_id, document_reference_code, doc_title, responsible.</p>
+                <p class="mb-4 text-xs text-slate-500">Download the CSV template above to get the exact header format and sample values.</p>
+
+                <form method="POST" action="{{ route('admin.form-templates.import-csv') }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">CSV File</label>
+                        <input type="file" name="csv_file" accept=".csv,text/csv" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('csv-import-dialog').close()" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+                        <button type="submit" class="rounded-lg bg-[#0f3d68] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0b2f52]">Import</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
     </div>
 @endsection

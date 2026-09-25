@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\FormTemplate;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FormTemplateController extends Controller
 {
@@ -65,10 +67,17 @@ class FormTemplateController extends Controller
             'effectivity_date' => ['nullable', 'date'],
             'document_location' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'in:active,obsolete'],
-            'downloadable_attachment' => ['required', 'file', 'max:20480'],
+            'downloadable_attachment' => ['nullable', 'file', 'max:20480', 'required_without:downloadable_attachment_url'],
+            'downloadable_attachment_url' => ['nullable', 'url', 'max:2048', 'required_without:downloadable_attachment'],
         ]);
 
-        $attachmentPath = $request->file('downloadable_attachment')->storePublicly('form-templates', 'public');
+        $attachmentPath = null;
+
+        if ($request->hasFile('downloadable_attachment')) {
+            $attachmentPath = $request->file('downloadable_attachment')->storePublicly('form-templates', 'public');
+        } elseif (filled($validated['downloadable_attachment_url'] ?? null)) {
+            $attachmentPath = $validated['downloadable_attachment_url'];
+        }
 
         FormTemplate::create([
             'document_type_id' => $validated['document_type_id'],
@@ -83,6 +92,183 @@ class FormTemplateController extends Controller
         ]);
 
         return back()->with('success', 'Form/template added.');
+    }
+
+    public function downloadCsvTemplate()
+    {
+        $headers = [
+            'document_type',
+            'document_reference_code',
+            'doc_title',
+            'responsible',
+            'revision_number',
+            'effectivity_date',
+            'document_location',
+            'status',
+            'downloadable_attachment_url',
+        ];
+
+        $sampleRow = [
+            'Form/Template',
+            'SDO-OSDS-F001',
+            'Sample Form Title',
+            'Schools Division Office',
+            '01',
+            '2026-09-25',
+            'Repository',
+            'active',
+            'https://example.com/sample-form.pdf',
+        ];
+
+        return response()->streamDownload(function () use ($headers, $sampleRow): void {
+            $output = fopen('php://output', 'w');
+
+            if (! $output) {
+                return;
+            }
+
+            fputcsv($output, $headers);
+            fputcsv($output, $sampleRow);
+
+            fclose($output);
+        }, 'form-templates-import-template.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function importCsv(Request $request)
+    {
+        $validated = $request->validate([
+            'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:20480'],
+        ]);
+
+        $filePath = $validated['csv_file']->getRealPath();
+        $handle = fopen($filePath, 'r');
+
+        if (! $handle) {
+            return back()->with('error', 'Unable to read the uploaded CSV file.');
+        }
+
+        $rawHeaders = fgetcsv($handle);
+
+        if (! $rawHeaders) {
+            fclose($handle);
+
+            return back()->with('error', 'The uploaded CSV file is empty.');
+        }
+
+        $headers = array_map(function ($header): string {
+            return Str::of((string) $header)
+                ->lower()
+                ->replace([' ', '-', '/'], '_')
+                ->replace('__', '_')
+                ->trim()
+                ->value();
+        }, $rawHeaders);
+
+        $imported = 0;
+        $skipped = 0;
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count(array_filter($row, fn ($value) => filled($value))) === 0) {
+                continue;
+            }
+
+            $rowData = array_combine($headers, array_pad($row, count($headers), null));
+
+            if ($rowData === false) {
+                $skipped++;
+
+                continue;
+            }
+
+            $referenceCode = trim((string) ($rowData['document_reference_code'] ?? $rowData['reference_code'] ?? ''));
+            $docTitle = trim((string) ($rowData['doc_title'] ?? $rowData['title'] ?? ''));
+            $responsible = trim((string) ($rowData['responsible'] ?? ''));
+
+            if ($referenceCode === '' || $docTitle === '' || $responsible === '') {
+                $skipped++;
+
+                continue;
+            }
+
+            $documentTypeId = null;
+            $documentTypeIdValue = $rowData['document_type_id'] ?? null;
+
+            if (is_numeric($documentTypeIdValue)) {
+                $documentTypeId = DocumentType::query()
+                    ->active()
+                    ->whereKey((int) $documentTypeIdValue)
+                    ->value('id');
+            }
+
+            if (! $documentTypeId) {
+                $documentTypeName = trim((string) ($rowData['document_type'] ?? $rowData['doc_type'] ?? ''));
+
+                if ($documentTypeName !== '') {
+                    $documentTypeId = DocumentType::query()
+                        ->active()
+                        ->where('name', $documentTypeName)
+                        ->value('id');
+                }
+            }
+
+            if (! $documentTypeId) {
+                $skipped++;
+
+                continue;
+            }
+
+            $status = strtolower(trim((string) ($rowData['status'] ?? DocumentStatus::ACTIVE->value)));
+
+            if (! in_array($status, [DocumentStatus::ACTIVE->value, DocumentStatus::OBSOLETE->value], true)) {
+                $status = DocumentStatus::ACTIVE->value;
+            }
+
+            $effectivityDate = null;
+            $effectivityDateRaw = trim((string) ($rowData['effectivity_date'] ?? ''));
+
+            if ($effectivityDateRaw !== '') {
+                try {
+                    $effectivityDate = Carbon::parse($effectivityDateRaw)->toDateString();
+                } catch (\Throwable) {
+                    $effectivityDate = null;
+                }
+            }
+
+            $attachment = trim((string) (
+                $rowData['downloadable_attachment_url']
+                ?? $rowData['downloadable_attachment']
+                ?? $rowData['attachment_url']
+                ?? ''
+            ));
+
+            FormTemplate::updateOrCreate(
+                ['document_reference_code' => $referenceCode],
+                [
+                    'document_type_id' => $documentTypeId,
+                    'doc_title' => $docTitle,
+                    'responsible' => $responsible,
+                    'revision_number' => trim((string) ($rowData['revision_number'] ?? '')) ?: null,
+                    'effectivity_date' => $effectivityDate,
+                    'document_location' => trim((string) ($rowData['document_location'] ?? '')) ?: null,
+                    'status' => $status,
+                    'downloadable_attachment_path' => $attachment !== '' ? $attachment : null,
+                ]
+            );
+
+            $imported++;
+        }
+
+        fclose($handle);
+
+        $message = "CSV import completed: {$imported} imported";
+
+        if ($skipped > 0) {
+            $message .= ", {$skipped} skipped";
+        }
+
+        return back()->with('success', $message.'.');
     }
 
     public function importFromDocument(Document $document)

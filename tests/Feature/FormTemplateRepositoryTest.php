@@ -21,6 +21,54 @@ class FormTemplateRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_download_csv_template_for_bulk_import(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'role' => UserRole::ADMIN,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.form-templates.csv-template'));
+
+        $response->assertOk();
+        $this->assertStringContainsString('form-templates-import-template.csv', (string) $response->headers->get('content-disposition'));
+        $this->assertStringContainsString('text/csv', (string) $response->headers->get('content-type'));
+        $this->assertStringContainsString('document_type,document_reference_code,doc_title,responsible', $response->streamedContent());
+    }
+
+    public function test_admin_can_create_a_form_template_using_attachment_url(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'role' => UserRole::ADMIN,
+        ]);
+
+        $documentType = DocumentType::create([
+            'name' => 'QMS Manual',
+            'description' => 'Quality Management System manual documents.',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.form-templates.store'), [
+            'document_type_id' => $documentType->id,
+            'document_reference_code' => 'URL-001',
+            'doc_title' => 'Public Manual',
+            'responsible' => 'QMS Unit',
+            'revision_number' => '02',
+            'effectivity_date' => '2026-09-25',
+            'document_location' => 'Portal',
+            'status' => DocumentStatus::ACTIVE->value,
+            'downloadable_attachment_url' => 'https://example.com/manual.pdf',
+        ]);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('form_templates', [
+            'document_reference_code' => 'URL-001',
+            'downloadable_attachment_path' => 'https://example.com/manual.pdf',
+        ]);
+    }
+
     public function test_admin_can_create_a_form_template_and_public_repository_shows_it(): void
     {
         Storage::fake('public');
@@ -182,5 +230,38 @@ class FormTemplateRepositoryTest extends TestCase
             ->assertOk()
             ->assertSee('Registered Documents')
             ->assertSee('Import to Repository');
+    }
+
+    public function test_admin_can_bulk_import_form_templates_from_csv(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'role' => UserRole::ADMIN,
+        ]);
+
+        DocumentType::create([
+            'name' => 'Form/Template',
+            'description' => 'Standardized forms and templates.',
+            'is_active' => true,
+        ]);
+
+        $csv = implode("\n", [
+            'document_type,document_reference_code,doc_title,responsible,revision_number,effectivity_date,document_location,status,downloadable_attachment_url',
+            'Form/Template,CSV-001,CSV Imported Template,Records Office,01,2026-09-25,Repository,active,https://example.com/csv-template.pdf',
+        ]);
+
+        $file = UploadedFile::fake()->createWithContent('form-templates.csv', $csv);
+
+        $response = $this->actingAs($admin)->post(route('admin.form-templates.import-csv'), [
+            'csv_file' => $file,
+        ]);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('form_templates', [
+            'document_reference_code' => 'CSV-001',
+            'doc_title' => 'CSV Imported Template',
+            'downloadable_attachment_path' => 'https://example.com/csv-template.pdf',
+        ]);
     }
 }
