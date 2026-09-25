@@ -6,6 +6,7 @@
         <a href="{{ route('forms.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Forms and Templates</a>
         @if (auth()->user()?->isAdmin())
             <a href="{{ route('admin.drafs.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Admin: DRAFs</a>
+            <a href="{{ route('admin.form-templates.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Forms / Templates</a>
             <a href="{{ route('admin.users.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Users</a>
             <a href="{{ route('admin.whitelist.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Whitelist</a>
             <a href="{{ route('admin.document-types.index') }}" class="block rounded-lg border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Document Types</a>
