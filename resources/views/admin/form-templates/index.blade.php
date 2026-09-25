@@ -132,5 +132,58 @@
                 {{ $templates->links() }}
             </div>
         </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-4 flex items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Registered Documents</h2>
+                    <p class="mt-1 text-sm text-slate-600">Use these entries to add existing registered forms/templates to the repository.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Reference Code</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Title</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Type</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Location</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Status</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        @forelse ($registeredDocuments as $document)
+                            <tr>
+                                <td class="px-4 py-3">{{ $document->draf?->reference_code ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $document->draf?->title ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $document->draf?->documentType?->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $document->location ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $document->status->label() }}</td>
+                                <td class="px-4 py-3">
+                                    @if ($document->draf?->reference_code)
+                                        <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
+                                            @csrf
+                                            <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Import to Repository</button>
+                                        </form>
+                                    @else
+                                        <span class="text-slate-500">Unavailable</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">No registered documents found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6">
+                {{ $registeredDocuments->links() }}
+            </div>
+        </div>
     </div>
 @endsection

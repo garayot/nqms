@@ -18,6 +18,12 @@
                         <div class="flex items-center gap-3">
                             <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $document->status->label() }}</span>
                             <a href="{{ route('documents.show', $document) }}" class="font-semibold text-[#0f3d68]">View</a>
+                            @if (auth()->user()?->isAdmin())
+                                <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
+                                    @csrf
+                                    <button type="submit" class="rounded-md border border-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-[#0f3d68] hover:bg-[#0f3d68] hover:text-white">Add to Forms/Templates</button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>

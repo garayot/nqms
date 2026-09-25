@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\DocumentStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
@@ -30,6 +31,12 @@ class FormTemplateController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $registeredDocuments = Document::query()
+            ->with(['draf.documentType', 'originatingOffice'])
+            ->latest()
+            ->paginate(8, ['*'], 'registered_documents')
+            ->withQueryString();
+
         $documentTypes = DocumentType::query()
             ->active()
             ->orderBy('name')
@@ -39,7 +46,7 @@ class FormTemplateController extends Controller
             ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
             ->all();
 
-        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes'));
+        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments'));
     }
 
     public function store(Request $request)
@@ -71,5 +78,40 @@ class FormTemplateController extends Controller
         ]);
 
         return back()->with('success', 'Form/template added.');
+    }
+
+    public function importFromDocument(Document $document)
+    {
+        $document->loadMissing(['draf.documentType', 'originatingOffice', 'draf.requestedBy']);
+
+        $referenceCode = $document->draf?->reference_code;
+
+        if (! filled($referenceCode)) {
+            return back()->with('error', 'The selected registered document does not have a reference code.');
+        }
+
+        $attachmentPath = $document->downloadable_doc_path ?: $document->draf?->approved_attachment_path;
+        $responsible = $document->originatingOffice?->office
+            ?? $document->draf?->requestedBy?->office
+            ?? $document->draf?->requestedBy?->name
+            ?? 'N/A';
+
+        FormTemplate::updateOrCreate(
+            ['document_reference_code' => $referenceCode],
+            [
+                'document_type_id' => $document->draf?->doc_type_id,
+                'doc_title' => $document->draf?->title ?? $referenceCode,
+                'responsible' => $responsible,
+                'revision_number' => $document->draf?->new_revision_number
+                    ?? $document->draf?->current_revision_no,
+                'effectivity_date' => $document->draf?->effectivity_date
+                    ?? $document->draf?->date_requested,
+                'document_location' => $document->location ?? 'Repository',
+                'status' => $document->status?->value ?? DocumentStatus::ACTIVE->value,
+                'downloadable_attachment_path' => $attachmentPath,
+            ]
+        );
+
+        return back()->with('success', 'Registered document added to forms/templates.');
     }
 }

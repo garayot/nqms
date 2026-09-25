@@ -47,6 +47,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/form-templates', [FormTemplateController::class, 'index'])->name('form-templates.index');
     Route::post('/form-templates', [FormTemplateController::class, 'store'])->name('form-templates.store');
+    Route::post('/form-templates/import/{document}', [FormTemplateController::class, 'importFromDocument'])->name('form-templates.import');
 
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.role');
