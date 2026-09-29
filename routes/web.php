@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\DocumentTypeController;
 use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
+use App\Http\Controllers\Admin\ProcessController;
+use App\Http\Controllers\Admin\ProcessGroupController;
+use App\Http\Controllers\Admin\SubProcessController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WhitelistController;
 use App\Http\Controllers\Approver\DrafApprovalController;
@@ -61,6 +64,27 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('document-types.index');
     Route::post('/document-types', [DocumentTypeController::class, 'store'])->name('document-types.store');
     Route::put('/document-types/{documentType}', [DocumentTypeController::class, 'update'])->name('document-types.update');
+
+    Route::get('/operations-manual', [ProcessGroupController::class, 'index'])->name('operations-manual.index');
+    Route::get('/operations-manual/process-groups/create', [ProcessGroupController::class, 'create'])->name('operations-manual.process-groups.create');
+    Route::post('/operations-manual/process-groups', [ProcessGroupController::class, 'store'])->name('operations-manual.process-groups.store');
+    Route::get('/operations-manual/process-groups/{processGroup}/edit', [ProcessGroupController::class, 'edit'])->name('operations-manual.process-groups.edit');
+    Route::put('/operations-manual/process-groups/{processGroup}', [ProcessGroupController::class, 'update'])->name('operations-manual.process-groups.update');
+    Route::delete('/operations-manual/process-groups/{processGroup}', [ProcessGroupController::class, 'destroy'])->name('operations-manual.process-groups.destroy');
+
+    Route::get('/operations-manual/process-groups/{processGroup}/processes', [ProcessController::class, 'index'])->name('operations-manual.processes.index');
+    Route::get('/operations-manual/process-groups/{processGroup}/processes/create', [ProcessController::class, 'create'])->name('operations-manual.processes.create');
+    Route::post('/operations-manual/process-groups/{processGroup}/processes', [ProcessController::class, 'store'])->name('operations-manual.processes.store');
+    Route::get('/operations-manual/process-groups/{processGroup}/processes/{process}/edit', [ProcessController::class, 'edit'])->name('operations-manual.processes.edit');
+    Route::put('/operations-manual/process-groups/{processGroup}/processes/{process}', [ProcessController::class, 'update'])->name('operations-manual.processes.update');
+    Route::delete('/operations-manual/process-groups/{processGroup}/processes/{process}', [ProcessController::class, 'destroy'])->name('operations-manual.processes.destroy');
+
+    Route::get('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes', [SubProcessController::class, 'index'])->name('operations-manual.sub-processes.index');
+    Route::get('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes/create', [SubProcessController::class, 'create'])->name('operations-manual.sub-processes.create');
+    Route::post('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes', [SubProcessController::class, 'store'])->name('operations-manual.sub-processes.store');
+    Route::get('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes/{subProcess}/edit', [SubProcessController::class, 'edit'])->name('operations-manual.sub-processes.edit');
+    Route::put('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes/{subProcess}', [SubProcessController::class, 'update'])->name('operations-manual.sub-processes.update');
+    Route::delete('/operations-manual/process-groups/{processGroup}/processes/{process}/sub-processes/{subProcess}', [SubProcessController::class, 'destroy'])->name('operations-manual.sub-processes.destroy');
 });
 
 Route::middleware(['auth', 'role:admin,reviewer'])->prefix('reviewer')->name('reviewer.')->group(function () {
