@@ -13,14 +13,14 @@
             <a href="{{ route('home') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Home</a>
             <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">NQMS Manual</a>
             <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Planning Docs</a>
-            <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Operations Manual</a>
+            <a href="{{ route('operations-manual') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Operations Manual</a>
             <a href="{{ route('forms.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Forms and Templates</a>
             <a href="{{ route('links') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Links</a>
             <a href="{{ route('organization') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">QMS Team</a>
             <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">ISO Portal</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Dashboard</a>
-                <a href="{{ route('draf.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">DRAF / Document Management</a>
+                <!-- <a href="{{ route('draf.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">DRAF / Document Management</a> -->
             @endauth
         </div>
 
@@ -38,14 +38,13 @@
                         <a href="{{ route('home') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Home</a>
                         <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">NQMS Manual</a>
                         <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Planning Docs</a>
-                        <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Operations Manual</a>
+                        <a href="{{ route('operations-manual') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Operations Manual</a>
                         <a href="{{ route('forms.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Forms and Templates</a>
                         <a href="{{ route('links') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Links</a>
                         <a href="{{ route('organization') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">QMS Team</a>
                         <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">ISO Portal</a>
                         @auth
                             <a href="{{ route('dashboard') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Dashboard</a>
-                            <a href="{{ route('draf.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">DRAF / Document Management</a>
                             <div class="my-1 border-t border-slate-200"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -60,14 +59,7 @@
             </details>
 
             @auth
-                <a href="{{ route('dashboard') }}" class="hidden items-center gap-2 rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0b2f52] md:inline-flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m10 17 5-5-5-5" />
-                        <path d="M15 12H3" />
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
+                
                 <form method="POST" action="{{ route('logout') }}" class="hidden md:block">
                     @csrf
                     <button type="submit" class="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">

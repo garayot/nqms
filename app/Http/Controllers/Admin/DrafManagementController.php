@@ -15,6 +15,12 @@ class DrafManagementController extends Controller
 {
     public function index(Request $request)
     {
+        $routePrefix = $this->routePrefix($request);
+        $pageTitle = $routePrefix === 'reviewer' ? 'Review DRAFs' : 'Admin: DRAFs';
+        $pageDescription = $routePrefix === 'reviewer'
+            ? 'Review submitted DRAFs and record the review decision.'
+            : 'Monitor, review, and manage all submissions.';
+
         $query = Draf::with(['requestedBy', 'documentType'])
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($sub) use ($search) {
@@ -30,14 +36,17 @@ class DrafManagementController extends Controller
 
         $drafs = $query->latest()->paginate(12)->withQueryString();
 
-        return view('admin.drafs.index', compact('drafs'));
+        return view('admin.drafs.index', compact('drafs', 'routePrefix', 'pageTitle', 'pageDescription'));
     }
 
-    public function show(Draf $draf)
+    public function show(Request $request, Draf $draf)
     {
+        $routePrefix = $this->routePrefix($request);
+        $pageTitle = $routePrefix === 'reviewer' ? 'Review DRAFs' : 'Admin: DRAFs';
+
         $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document', 'histories.user', 'reasonOption']);
 
-        return view('admin.drafs.show', compact('draf'));
+        return view('admin.drafs.show', compact('draf', 'routePrefix', 'pageTitle'));
     }
 
     public function print(Draf $draf)
@@ -54,6 +63,7 @@ class DrafManagementController extends Controller
     {
         $validated = $request->validated();
         $oldStatus = $draf->status?->value;
+        $routePrefix = $this->routePrefix($request);
 
         $draf->review = $validated['review'];
         $draf->reason1 = $validated['reason1'] ?? null;
@@ -73,6 +83,11 @@ class DrafManagementController extends Controller
             'remarks' => $validated['reason1'] ?? null,
         ]);
 
-        return redirect()->route('admin.drafs.show', $draf)->with('success', 'Review decision recorded.');
+        return redirect()->route($routePrefix.'.drafs.show', $draf)->with('success', 'Review decision recorded.');
+    }
+
+    protected function routePrefix(Request $request): string
+    {
+        return $request->routeIs('reviewer.*') ? 'reviewer' : 'admin';
     }
 }
