@@ -71,7 +71,7 @@ class DrafApprovalController extends Controller
             $draf->status = DrafStatus::APPROVED->value;
 
             if ($request->hasFile('approved_attachment')) {
-                $path = $request->file('approved_attachment')->store('documents/final', 'public');
+                $path = $request->file('approved_attachment')->store('documents/final');
                 $draf->approved_attachment_path = $path;
                 $draf->date_registered = $validated['date_registered'] ?? now()->toDateString();
                 $draf->status = DrafStatus::REGISTERED->value;

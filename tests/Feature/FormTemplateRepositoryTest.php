@@ -109,6 +109,69 @@ class FormTemplateRepositoryTest extends TestCase
             ->assertSee('FT-001');
     }
 
+    public function test_guest_sees_login_warning_before_downloading_a_form_template(): void
+    {
+        Storage::fake('public');
+
+        $documentType = DocumentType::create([
+            'name' => 'Form/Template',
+            'description' => 'Standardized forms and templates.',
+            'is_active' => true,
+        ]);
+
+        FormTemplate::create([
+            'document_type_id' => $documentType->id,
+            'document_reference_code' => 'PUB-001',
+            'doc_title' => 'Public Download Template',
+            'responsible' => 'Quality Team',
+            'revision_number' => '01',
+            'effectivity_date' => '2026-09-25',
+            'document_location' => 'Repository',
+            'status' => DocumentStatus::ACTIVE->value,
+            'downloadable_attachment_path' => 'form-templates/public-template.pdf',
+        ]);
+
+        $this->get(route('forms.index'))
+            ->assertOk()
+            ->assertSee('Please log in with your official account before downloading files from the public repository.')
+            ->assertSee('Login required');
+    }
+
+    public function test_authenticated_user_can_download_a_form_template(): void
+    {
+        Storage::fake('public');
+
+        /** @var User $user */
+        $user = User::factory()->create([
+            'role' => UserRole::USER,
+        ]);
+
+        $documentType = DocumentType::create([
+            'name' => 'Form/Template',
+            'description' => 'Standardized forms and templates.',
+            'is_active' => true,
+        ]);
+
+        Storage::disk('public')->put('form-templates/public-template.pdf', 'template contents');
+
+        $template = FormTemplate::create([
+            'document_type_id' => $documentType->id,
+            'document_reference_code' => 'PUB-002',
+            'doc_title' => 'Protected Template',
+            'responsible' => 'Quality Team',
+            'revision_number' => '01',
+            'effectivity_date' => '2026-09-25',
+            'document_location' => 'Repository',
+            'status' => DocumentStatus::ACTIVE->value,
+            'downloadable_attachment_path' => 'form-templates/public-template.pdf',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('forms.download', $template));
+
+        $response->assertOk();
+        $this->assertStringContainsString('public-template.pdf', (string) $response->headers->get('content-disposition'));
+    }
+
     public function test_admin_can_import_a_registered_document_into_form_templates(): void
     {
         Storage::fake('public');

@@ -7,6 +7,10 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class DocumentController extends Controller
 {
@@ -63,5 +67,47 @@ class DocumentController extends Controller
         $document->load(['draf.documentType', 'originatingOffice']);
 
         return view('documents.show', compact('document'));
+    }
+
+    public function download(Document $document): BinaryFileResponse
+    {
+        $path = $document->downloadable_doc_path;
+
+        if (! filled($path)) {
+            abort(404);
+        }
+
+        if (Storage::disk('local')->exists($path)) {
+            return response()->download(Storage::disk('local')->path($path));
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return response()->download(Storage::disk('public')->path($path));
+        }
+
+        abort(404);
+    }
+
+    public function downloadFormTemplate(FormTemplate $formTemplate): Response
+    {
+        $path = $formTemplate->downloadable_attachment_path;
+
+        if (! filled($path)) {
+            abort(404);
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return redirect()->away($path);
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return response()->download(Storage::disk('public')->path($path));
+        }
+
+        if (Storage::disk('local')->exists($path)) {
+            return response()->download(Storage::disk('local')->path($path));
+        }
+
+        abort(404);
     }
 }

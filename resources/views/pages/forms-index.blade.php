@@ -83,14 +83,15 @@
                             <td class="px-4 py-3">
                                 <div class="flex justify-end">
                                     @if ($document->downloadable_attachment_path)
-                                        @php
-                                            $attachmentLink = \Illuminate\Support\Str::startsWith($document->downloadable_attachment_path, ['http://', 'https://'])
-                                                ? $document->downloadable_attachment_path
-                                                : Storage::url($document->downloadable_attachment_path);
-                                        @endphp
-                                        <a href="{{ $attachmentLink }}" target="_blank" aria-label="Download" class="inline-flex rounded-md bg-[#0f3d68] p-2 text-white">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download preview-icon h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
-                                        </a>
+                                        @auth
+                                            <a href="{{ route('forms.download', $document) }}" target="_blank" aria-label="Download" class="inline-flex rounded-md bg-[#0f3d68] p-2 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download preview-icon h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                                            </a>
+                                        @else
+                                            <button type="button" aria-label="Download" onclick="document.getElementById('login-download-modal').classList.remove('hidden')" class="inline-flex rounded-md bg-[#0f3d68] p-2 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download preview-icon h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                                            </button>
+                                        @endauth
                                     @else
                                         <span class="text-xs text-slate-500">No file</span>
                                     @endif
@@ -110,4 +111,20 @@
             {{ $documents->links() }}
         </div>
     </div>
+
+    @guest
+        <div id="login-download-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4 py-6">
+            <div class="absolute inset-0 bg-slate-900/60" onclick="document.getElementById('login-download-modal').classList.add('hidden')"></div>
+            <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                <div class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Login required</div>
+                <h2 class="mt-2 text-2xl font-bold text-slate-900">Download access requires sign-in</h2>
+                <p class="mt-3 text-sm text-slate-600">Please log in with your official account before downloading files from the public repository.</p>
+
+                <div class="mt-6 flex items-center justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('login-download-modal').classList.add('hidden')" class="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">Close</button>
+                    <a href="{{ route('login') }}" class="rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Login</a>
+                </div>
+            </div>
+        </div>
+    @endguest
 @endsection

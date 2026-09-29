@@ -17,6 +17,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/links', [HomeController::class, 'links'])->name('links');
 Route::get('/organization', [HomeController::class, 'organization'])->name('organization');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
+Route::get('/login', [GoogleAuthController::class, 'redirectToGoogle'])->name('login');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
@@ -37,6 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::get('/forms-templates/{formTemplate}/download', [DocumentController::class, 'downloadFormTemplate'])->name('forms.download');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

@@ -29,7 +29,7 @@
 
         @if ($document->downloadable_doc_path)
             <div class="mt-6">
-                <a href="{{ Storage::url($document->downloadable_doc_path) }}" target="_blank" class="inline-flex rounded-md bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white">Download File</a>
+                <a href="{{ route('documents.download', $document) }}" class="inline-flex rounded-md bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white">Download File</a>
             </div>
         @endif
     </div>
