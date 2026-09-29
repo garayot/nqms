@@ -18,25 +18,31 @@
 
         <div class="mt-6 space-y-4" id="operations-manual-container">
             @forelse ($processGroups as $processGroup)
-                <details class="operations-group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-search="{{ strtolower($processGroup->process_group_name) }}">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-4 text-left text-lg font-semibold text-[#0f3d68] hover:bg-blue-100">
-                        <span>Process Group: {{ $processGroup->process_group_name }}</span>
-                        <svg class="h-5 w-5 shrink-0 text-[#0f3d68]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
-                        </svg>
-                    </summary>
+                <section class="operations-group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-search="{{ strtolower($processGroup->process_group_name) }}" data-expanded="false">
+                    <h2>
+                        <button type="button" class="operations-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-4 text-left text-lg font-semibold text-[#0f3d68] transition-colors hover:bg-blue-100" aria-expanded="false" aria-controls="operations-group-panel-{{ $processGroup->id }}" id="operations-group-trigger-{{ $processGroup->id }}">
+                            <span>Process Group: {{ $processGroup->process_group_name }}</span>
+                            <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-[#0f3d68] transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                            </svg>
+                        </button>
+                    </h2>
 
-                    <div class="space-y-3 p-4">
+                    <div id="operations-group-panel-{{ $processGroup->id }}" role="region" aria-labelledby="operations-group-trigger-{{ $processGroup->id }}" class="operations-panel grid grid-rows-[0fr] overflow-hidden transition-all duration-300 ease-in-out opacity-0">
+                        <div class="overflow-hidden p-4">
                         @forelse ($processGroup->processes as $process)
-                            <details class="operations-process overflow-hidden rounded-xl border border-slate-200" data-search="{{ strtolower($process->process_name) }}">
-                                <summary class="flex cursor-pointer list-none items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-base font-semibold text-slate-800 hover:bg-slate-100">
-                                    <span>Process: {{ $process->process_name }}</span>
-                                    <svg class="h-5 w-5 shrink-0 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
-                                    </svg>
-                                </summary>
+                            <section class="operations-process overflow-hidden rounded-xl border border-slate-200" data-search="{{ strtolower($process->process_name) }}" data-expanded="false">
+                                <h3>
+                                    <button type="button" class="operations-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-base font-semibold text-slate-800 transition-colors hover:bg-slate-100" aria-expanded="false" aria-controls="operations-process-panel-{{ $process->id }}" id="operations-process-trigger-{{ $process->id }}">
+                                        <span>Process: {{ $process->process_name }}</span>
+                                        <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-slate-600 transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                </h3>
 
-                                <div class="space-y-2 p-3">
+                                <div id="operations-process-panel-{{ $process->id }}" role="region" aria-labelledby="operations-process-trigger-{{ $process->id }}" class="operations-panel grid grid-rows-[0fr] overflow-hidden transition-all duration-300 ease-in-out opacity-0">
+                                    <div class="overflow-hidden p-3">
                                     @forelse ($process->subProcesses as $subProcess)
                                         <div class="operations-subprocess overflow-hidden rounded-lg border border-slate-200" data-search="{{ strtolower($subProcess->sub_process_name.' '.$subProcess->url) }}">
                                             <div class="flex flex-col gap-3 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -53,13 +59,15 @@
                                     @empty
                                         <div class="rounded-lg border border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500">No sub-processes available for this process.</div>
                                     @endforelse
+                                    </div>
                                 </div>
-                            </details>
+                            </section>
                         @empty
                             <div class="rounded-lg border border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500">No processes available for this process group.</div>
                         @endforelse
+                        </div>
                     </div>
-                </details>
+                </section>
             @empty
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center text-slate-500 shadow-sm">No operations manual records available.</div>
             @endforelse
@@ -70,25 +78,48 @@
         (() => {
             const searchInput = document.getElementById('operations-manual-search');
             const clearButton = document.getElementById('operations-manual-clear');
-            const groups = document.querySelectorAll('#operations-manual-container > details.operations-group');
+            const groups = document.querySelectorAll('#operations-manual-container > .operations-group');
 
             if (!searchInput || !clearButton || groups.length === 0) {
                 return;
             }
 
-            const allAccordions = document.querySelectorAll('#operations-manual-container details');
-            allAccordions.forEach((accordion) => {
-                const icon = accordion.querySelector(':scope > summary svg');
+            const syncAccordion = (accordion, expanded) => {
+                const panel = accordion.querySelector(':scope > .operations-panel');
+                const trigger = accordion.querySelector(':scope > h2 > .operations-toggle, :scope > h3 > .operations-toggle');
+                const icon = accordion.querySelector(':scope > h2 .operations-icon, :scope > h3 .operations-icon');
 
-                if (!icon) {
+                if (!panel || !trigger) {
                     return;
                 }
 
-                icon.classList.toggle('rotate-180', accordion.open);
-                icon.classList.add('transition-transform');
+                accordion.dataset.expanded = expanded ? 'true' : 'false';
+                trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                panel.classList.toggle('grid-rows-[1fr]', expanded);
+                panel.classList.toggle('grid-rows-[0fr]', !expanded);
+                panel.classList.toggle('opacity-100', expanded);
+                panel.classList.toggle('opacity-0', !expanded);
 
-                accordion.addEventListener('toggle', () => {
-                    icon.classList.toggle('rotate-180', accordion.open);
+                if (icon) {
+                    icon.classList.toggle('rotate-180', expanded);
+                }
+            };
+
+            const accordionButtons = document.querySelectorAll('#operations-manual-container .operations-toggle');
+
+            accordionButtons.forEach((button) => {
+                const accordion = button.closest('.operations-group, .operations-process');
+
+                if (!accordion) {
+                    return;
+                }
+
+                syncAccordion(accordion, accordion.dataset.expanded !== 'false');
+
+                button.addEventListener('click', () => {
+                    const nextExpanded = accordion.dataset.expanded !== 'false' ? false : true;
+
+                    syncAccordion(accordion, nextExpanded);
                 });
             });
 
@@ -99,12 +130,12 @@
                     let groupVisible = false;
 
                     const groupText = group.dataset.search || '';
-                    const processes = group.querySelectorAll(':scope > div > details.operations-process');
+                    const processes = group.querySelectorAll(':scope > .operations-panel > div > .operations-process');
 
                     processes.forEach((process) => {
                         let processVisible = false;
                         const processText = process.dataset.search || '';
-                        const subProcesses = process.querySelectorAll(':scope > div .operations-subprocess[data-search]');
+                        const subProcesses = process.querySelectorAll(':scope > .operations-panel .operations-subprocess[data-search]');
 
                         subProcesses.forEach((subProcess) => {
                             const subText = subProcess.dataset.search || '';
@@ -121,7 +152,7 @@
                         }
 
                         process.style.display = processVisible ? '' : 'none';
-                        process.open = processVisible;
+                        syncAccordion(process, processVisible);
                         groupVisible = groupVisible || processVisible;
                     });
 
@@ -129,8 +160,8 @@
                         groupVisible = true;
                         processes.forEach((process) => {
                             process.style.display = '';
-                            process.open = true;
-                            const subProcesses = process.querySelectorAll(':scope > div .operations-subprocess[data-search]');
+                            syncAccordion(process, true);
+                            const subProcesses = process.querySelectorAll(':scope > .operations-panel .operations-subprocess[data-search]');
                             subProcesses.forEach((subProcess) => {
                                 subProcess.style.display = '';
                             });
@@ -138,7 +169,7 @@
                     }
 
                     group.style.display = groupVisible ? '' : 'none';
-                    group.open = groupVisible;
+                    syncAccordion(group, groupVisible);
                 });
             };
 
