@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\DocumentStatus;
 use App\Models\Document;
+use App\Models\DocumentType;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,10 @@ class DocumentController extends Controller
     {
         $documents = FormTemplate::query()
             ->with('documentType')
-            ->where('status', DocumentStatus::ACTIVE->value)
+            ->where('status', $request->status ?: DocumentStatus::ACTIVE->value)
+            ->when($request->document_type_id, function ($query, $documentTypeId) {
+                $query->where('document_type_id', $documentTypeId);
+            })
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($sub) use ($search) {
                     $sub->where('document_reference_code', 'like', "%{$search}%")
@@ -30,7 +34,12 @@ class DocumentController extends Controller
             ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
             ->all();
 
-        return view('pages.forms-index', compact('documents', 'statusOptions'));
+        $documentTypeOptions = DocumentType::query()
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+
+        return view('pages.forms-index', compact('documents', 'statusOptions', 'documentTypeOptions'));
     }
 
     public function index(Request $request)
