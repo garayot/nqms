@@ -34,7 +34,7 @@
 
                     <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
                         <div class="text-sm font-semibold text-slate-800">Reason</div>
-                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ $draf->reason }}</p>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ $draf->reasonOption?->name ?? $draf->reason }}</p>
                     </div>
 
                     <div class="mt-5 flex flex-wrap gap-3">

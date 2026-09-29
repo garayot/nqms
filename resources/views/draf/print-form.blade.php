@@ -290,7 +290,7 @@
                 <td colspan="14" class="section-label">Reason for the request:</td>
             </tr>
             <tr>
-                <td colspan="14" class="text-area">{{ $draf->reason ?: ' ' }}</td>
+                <td colspan="14" class="text-area">{{ $draf->reasonOption?->name ?? $draf->reason ?: ' ' }}</td>
             </tr>
             <tr>
                 <td colspan="2"><span class="label">Requested by:</span></td>

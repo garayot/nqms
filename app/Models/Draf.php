@@ -26,6 +26,7 @@ class Draf extends Model
         'title',
         'reference_code',
         'current_revision_no',
+        'reason_id',
         'reason',
         'requested_by',
         'date_requested',
@@ -77,6 +78,11 @@ class Draf extends Model
     public function documentType(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class, 'doc_type_id');
+    }
+
+    public function reasonOption(): BelongsTo
+    {
+        return $this->belongsTo(Reason::class, 'reason_id');
     }
 
     public function document(): HasOne

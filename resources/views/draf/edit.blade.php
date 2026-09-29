@@ -70,7 +70,12 @@
                 </div>
                 <div class="lg:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Reason</label>
-                    <textarea name="reason" rows="4" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">{{ old('reason', $draf->reason) }}</textarea>
+                    <select name="reason_id" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                        <option value="">Select</option>
+                        @foreach ($reasons as $reason)
+                            <option value="{{ $reason->id }}" {{ (string) old('reason_id', $draf->reason_id) === (string) $reason->id ? 'selected' : '' }}>{{ $reason->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="lg:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Attachment</label>

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDrafRequest;
 use App\Models\DocumentType;
 use App\Models\Draf;
 use App\Models\DrafHistory;
+use App\Models\Reason;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -27,8 +28,9 @@ class DrafController extends Controller
     public function create()
     {
         $documentTypes = DocumentType::active()->get();
+        $reasons = Reason::query()->orderBy('name')->get();
 
-        return view('draf.create', compact('documentTypes'));
+        return view('draf.create', compact('documentTypes', 'reasons'));
     }
 
     public function store(StoreDrafRequest $request)
@@ -52,7 +54,7 @@ class DrafController extends Controller
     {
         $this->authorize('view', $draf);
 
-        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document']);
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document', 'reasonOption']);
 
         return view('draf.show', compact('draf'));
     }
@@ -61,7 +63,7 @@ class DrafController extends Controller
     {
         $this->authorize('view', $draf);
 
-        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'reasonOption']);
 
         $pdf = Pdf::loadView('draf.print-form', compact('draf'))
             ->setPaper('A4', 'portrait');
@@ -73,8 +75,9 @@ class DrafController extends Controller
     {
         $this->authorize('update', $draf);
         $documentTypes = DocumentType::active()->get();
+        $reasons = Reason::query()->orderBy('name')->get();
 
-        return view('draf.edit', compact('draf', 'documentTypes'));
+        return view('draf.edit', compact('draf', 'documentTypes', 'reasons'));
     }
 
     public function update(UpdateDrafRequest $request, Draf $draf)

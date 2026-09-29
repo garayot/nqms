@@ -38,6 +38,7 @@ class DrafApprovalController extends Controller
             'documentType',
             'document',
             'histories.user',
+            'reasonOption',
         ]);
 
         return view('approver.drafs.show', compact('draf'));
@@ -45,7 +46,7 @@ class DrafApprovalController extends Controller
 
     public function print(Draf $draf)
     {
-        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'reasonOption']);
 
         $pdf = Pdf::loadView('draf.print-form', compact('draf'))
             ->setPaper('A4', 'portrait');

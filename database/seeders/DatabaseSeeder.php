@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DocumentTypeSeeder::class,
+            ReasonSeeder::class,
             WhitelistedUserSeeder::class,
         ]);
     }

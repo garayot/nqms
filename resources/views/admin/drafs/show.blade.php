@@ -23,7 +23,7 @@
                     <div class="flex justify-between"><dt>Source</dt><dd>{{ $draf->source?->label() ?? $draf->source }}</dd></div>
                     <div class="flex justify-between"><dt>Document Type</dt><dd>{{ $draf->documentType?->name }}</dd></div>
                     <div class="flex justify-between"><dt>Requested By</dt><dd>{{ $draf->requestedBy?->name }}</dd></div>
-                    <div class="flex justify-between"><dt>Reason</dt><dd>{{ $draf->reason }}</dd></div>
+                    <div class="flex justify-between"><dt>Reason</dt><dd>{{ $draf->reasonOption?->name ?? $draf->reason }}</dd></div>
                     <div class="flex justify-between"><dt>Reference Code</dt><dd>{{ $draf->reference_code ?? 'N/A' }}</dd></div>
                     <div class="flex justify-between"><dt>Current Revision</dt><dd>{{ $draf->current_revision_no }}</dd></div>
                 </dl>
