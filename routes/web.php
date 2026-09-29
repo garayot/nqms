@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/links', [HomeController::class, 'links'])->name('links');
 Route::get('/organization', [HomeController::class, 'organization'])->name('organization');
+Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
 
 Route::middleware('guest')->group(function () {
