@@ -1,9 +1,11 @@
 <header class="relative z-50 isolate border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur">
     <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0f3d68] text-sm font-bold text-white">DepEd</div>
+            
+                <img src="{{ Storage::url('logo/Bislig SDO logo.png') }}" alt="Bislig SDO logo" class="h-12 w-12 rounded-full object-cover">
+            
             <div>
-                <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Bislig City</div>
+                <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Bislig City Division</div>
                 <div class="text-sm font-semibold text-slate-800">NQMS</div>
             </div>
         </a>
