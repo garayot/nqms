@@ -34,39 +34,55 @@
             </div>
         </form>
 
-        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            @forelse ($documents as $document)
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div class="mb-3 flex items-center justify-between gap-3">
-                        <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $document->status->label() }}</span>
-                        <span class="text-xs text-slate-500">Rev. {{ $document->revision_number ?? 'N/A' }}</span>
-                    </div>
-                    <h2 class="text-lg font-semibold text-slate-900">{{ $document->doc_title }}</h2>
-                    <dl class="mt-4 space-y-2 text-sm text-slate-600">
-                        <div class="flex justify-between gap-4"><dt>Document Type</dt><dd>{{ $document->documentType?->name ?? 'N/A' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Reference Code</dt><dd>{{ $document->document_reference_code }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Responsible</dt><dd>{{ $document->responsible }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Effectivity Date</dt><dd>{{ $document->effectivity_date?->format('M d, Y') ?? 'N/A' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Location</dt><dd>{{ $document->document_location ?? 'N/A' }}</dd></div>
-                    </dl>
-                    <div class="mt-5">
-                        @if ($document->downloadable_attachment_path)
-                            @php
-                                $attachmentLink = \Illuminate\Support\Str::startsWith($document->downloadable_attachment_path, ['http://', 'https://'])
-                                    ? $document->downloadable_attachment_path
-                                    : Storage::url($document->downloadable_attachment_path);
-                            @endphp
-                            <a href="{{ $attachmentLink }}" target="_blank" class="inline-flex rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Download</a>
-                        @else
-                            <span class="text-sm text-slate-500">No downloadable file available</span>
-                        @endif
-                    </div>
-                </div>
-            @empty
-                <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-                    No forms or templates are currently available.
-                </div>
-            @endforelse
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table class="min-w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-700">
+                    <tr>
+                        <th class="px-4 py-3 font-semibold">Document Reference Code</th>
+                        <th class="px-4 py-3 font-semibold">Document Title/Description</th>
+                        <th class="px-4 py-3 font-semibold">Originating Office</th>
+                        <th class="px-4 py-3 font-semibold">Person Responsible</th>
+                        <th class="px-4 py-3 font-semibold">Revision Number</th>
+                        <th class="px-4 py-3 font-semibold">Effectivity Date</th>
+                        <th class="px-4 py-3 font-semibold">Location</th>
+                        <th class="px-4 py-3 font-semibold text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-800">
+                    @forelse ($documents as $document)
+                        <tr class="align-top">
+                            <td class="px-4 py-3 font-semibold text-slate-900">{{ $document->document_reference_code }}</td>
+                            <td class="px-4 py-3">
+                                <div class="font-semibold text-slate-900">{{ $document->doc_title }}</div>
+                                <div class="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $document->status->label() }}</div>
+                            </td>
+                            <td class="px-4 py-3">—</td>
+                            <td class="px-4 py-3">{{ $document->responsible }}</td>
+                            <td class="px-4 py-3">{{ $document->revision_number ?? 'N/A' }}</td>
+                            <td class="px-4 py-3">{{ $document->effectivity_date?->format('F d, Y') ?? 'N/A' }}</td>
+                            <td class="px-4 py-3">{{ $document->document_location ?? 'N/A' }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex justify-end">
+                                    @if ($document->downloadable_attachment_path)
+                                        @php
+                                            $attachmentLink = \Illuminate\Support\Str::startsWith($document->downloadable_attachment_path, ['http://', 'https://'])
+                                                ? $document->downloadable_attachment_path
+                                                : Storage::url($document->downloadable_attachment_path);
+                                        @endphp
+                                        <a href="{{ $attachmentLink }}" target="_blank" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white">Download</a>
+                                    @else
+                                        <span class="text-xs text-slate-500">No file</span>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-slate-500">No forms or templates are currently available.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
         <div class="mt-8">
