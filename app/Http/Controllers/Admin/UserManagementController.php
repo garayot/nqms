@@ -18,7 +18,9 @@ class UserManagementController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $roles = UserRole::cases();
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function updateRole(Request $request, User $user)

@@ -4,8 +4,8 @@
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900">DRAF Management</h1>
-                <p class="mt-2 text-sm text-slate-600">Monitor, review, and manage all submissions.</p>
+                <h1 class="text-3xl font-bold text-slate-900">{{ $pageTitle }}</h1>
+                <p class="mt-2 text-sm text-slate-600">{{ $pageDescription }}</p>
             </div>
             <form method="GET" class="w-full max-w-md">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by draf number or title" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
@@ -30,7 +30,7 @@
                             <td class="px-4 py-3">{{ $draf->title }}</td>
                             <td class="px-4 py-3">{{ $draf->requestedBy?->name ?? 'N/A' }}</td>
                             <td class="px-4 py-3"><x-status-badge :status="$draf->status?->value ?? 'draft'" /></td>
-                            <td class="px-4 py-3"><a href="{{ route('admin.drafs.show', $draf) }}" class="font-semibold text-[#0f3d68]">Review</a></td>
+                            <td class="px-4 py-3"><a href="{{ route($routePrefix.'.drafs.show', $draf) }}" class="font-semibold text-[#0f3d68]">Review</a></td>
                         </tr>
                     @empty
                         <tr>

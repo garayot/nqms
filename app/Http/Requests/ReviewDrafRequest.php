@@ -10,7 +10,9 @@ class ReviewDrafRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isApprover());
+        $user = $this->user();
+
+        return $user !== null && ($user->isAdmin() || $user->isReviewer());
     }
 
     public function rules(): array

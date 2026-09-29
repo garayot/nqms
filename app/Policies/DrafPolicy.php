@@ -10,7 +10,7 @@ class DrafPolicy
 {
     public function view(User $user, Draf $draf): bool
     {
-        return $user->id === $draf->requested_by || $user->isAdmin() || $user->isApprover();
+        return $user->id === $draf->requested_by || $user->isAdmin() || $user->isApprover() || $user->isReviewer();
     }
 
     public function update(User $user, Draf $draf): bool

@@ -63,7 +63,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/document-types/{documentType}', [DocumentTypeController::class, 'update'])->name('document-types.update');
 });
 
-Route::middleware(['auth', 'role:approver'])->prefix('approver')->name('approver.')->group(function () {
+Route::middleware(['auth', 'role:admin,reviewer'])->prefix('reviewer')->name('reviewer.')->group(function () {
+    Route::get('/drafs', [DrafManagementController::class, 'index'])->name('drafs.index');
+    Route::get('/drafs/{draf}', [DrafManagementController::class, 'show'])->name('drafs.show');
+    Route::get('/drafs/{draf}/print', [DrafManagementController::class, 'print'])->name('drafs.print');
+    Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
+});
+
+Route::middleware(['auth', 'role:admin,approver'])->prefix('approver')->name('approver.')->group(function () {
     Route::get('/drafs', [DrafApprovalController::class, 'index'])->name('drafs.index');
     Route::get('/drafs/{draf}', [DrafApprovalController::class, 'show'])->name('drafs.show');
     Route::get('/drafs/{draf}/print', [DrafApprovalController::class, 'print'])->name('drafs.print');

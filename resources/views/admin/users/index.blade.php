@@ -34,9 +34,9 @@
                                 <form method="POST" action="{{ route('admin.users.role', $user) }}" class="flex gap-2">
                                     @csrf
                                     <select name="role" class="rounded-lg border border-slate-300 px-2 py-2 text-sm">
-                                        <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
-                                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                                        <option value="approver" {{ $user->role === 'approver' ? 'selected' : '' }}>Approver</option>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->value }}" {{ $user->role?->value === $role->value ? 'selected' : '' }}>{{ $role->label() }}</option>
+                                        @endforeach
                                     </select>
                                     <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Save</button>
                                 </form>
