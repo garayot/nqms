@@ -35,14 +35,14 @@ class DrafManagementController extends Controller
 
     public function show(Draf $draf)
     {
-        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document', 'histories.user']);
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'document', 'histories.user', 'reasonOption']);
 
         return view('admin.drafs.show', compact('draf'));
     }
 
     public function print(Draf $draf)
     {
-        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy']);
+        $draf->load(['documentType', 'requestedBy', 'reviewedBy', 'approvedBy', 'reasonOption']);
 
         $pdf = Pdf::loadView('draf.print-form', compact('draf'))
             ->setPaper('A4', 'portrait');

@@ -26,7 +26,7 @@ class UpdateDrafRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'reference_code' => ['nullable', 'string', 'max:255'],
             'current_revision_no' => ['required', 'string', 'max:50'],
-            'reason' => ['required', 'string'],
+            'reason_id' => ['required', 'exists:reasons,id'],
             'requested_by' => ['required', 'exists:users,id'],
             'date_requested' => ['required', 'date'],
             'attachment' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:2048'],

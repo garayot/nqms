@@ -7,7 +7,15 @@
                 <div class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Registered Document</div>
                 <h1 class="mt-2 text-3xl font-bold text-slate-900">{{ $document->draf->title }}</h1>
             </div>
-            <x-status-badge :status="$document->status?->value ?? 'active'" />
+            <div class="flex items-center gap-3">
+                <x-status-badge :status="$document->status?->value ?? 'active'" />
+                @if (auth()->user()?->isAdmin())
+                    <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
+                        @csrf
+                        <button type="submit" class="rounded-md bg-[#0f3d68] px-4 py-2 text-sm font-semibold text-white">Add to Forms/Templates</button>
+                    </form>
+                @endif
+            </div>
         </div>
 
         <dl class="grid gap-4 md:grid-cols-2 text-sm text-slate-600">

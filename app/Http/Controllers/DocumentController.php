@@ -3,64 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DocumentStatus;
-use App\Enums\DrafApplicability;
-use App\Enums\DrafSource;
 use App\Models\Document;
-use App\Models\DocumentType;
+use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
     public function publicIndex(Request $request)
     {
-        $documentTypes = DocumentType::query()
-            ->active()
-            ->orderBy('name')
-            ->get(['id', 'name']);
-
-        $sourceOptions = collect(DrafSource::cases())
-            ->mapWithKeys(fn (DrafSource $source) => [$source->value => $source->label()])
-            ->all();
-
-        $applicabilityOptions = collect(DrafApplicability::cases())
-            ->mapWithKeys(fn (DrafApplicability $applicability) => [$applicability->value => $applicability->label()])
-            ->all();
-
-        $documents = Document::query()
-            ->with(['draf.documentType', 'originatingOffice'])
+        $documents = FormTemplate::query()
+            ->with('documentType')
             ->where('status', DocumentStatus::ACTIVE->value)
             ->when($request->search, function ($query, $search) {
-                $query->whereHas('draf', function ($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('reference_code', 'like', "%{$search}%");
+                $query->where(function ($sub) use ($search) {
+                    $sub->where('document_reference_code', 'like', "%{$search}%")
+                        ->orWhere('doc_title', 'like', "%{$search}%")
+                        ->orWhere('responsible', 'like', "%{$search}%")
+                        ->orWhere('document_location', 'like', "%{$search}%");
                 });
-            })
-            ->when($request->document_type, function ($query, $value) {
-                $query->whereHas('draf', function ($q) use ($value) {
-                    $q->where('doc_type_id', $value);
-                });
-            })
-            ->when($request->source, function ($query, $value) {
-                $query->whereHas('draf', function ($q) use ($value) {
-                    $q->where('source', $value);
-                });
-            })
-            ->when($request->applicability, function ($query, $value) {
-                $query->whereHas('draf', function ($q) use ($value) {
-                    $q->where('applicability', $value);
-                });
-            })
-            ->when($request->status, function ($query, $value) {
-                $query->where('status', $value);
-            })
-            ->when($request->originating_office, function ($query, $value) {
-                $query->where('originating_office_id', $value);
             })
             ->latest()
             ->paginate(12)
             ->withQueryString();
 
-        return view('pages.forms-index', compact('documents', 'documentTypes', 'sourceOptions', 'applicabilityOptions'));
+        $statusOptions = collect(DocumentStatus::cases())
+            ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
+            ->all();
+
+        return view('pages.forms-index', compact('documents', 'statusOptions'));
     }
 
     public function index(Request $request)
