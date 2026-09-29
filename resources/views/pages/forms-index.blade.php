@@ -77,7 +77,7 @@
                             </td>
                             <td class="px-4 py-3">—</td>
                             <td class="px-4 py-3">{{ $document->responsible }}</td>
-                            <td class="px-4 py-3">{{ $document->revision_number ?? 'N/A' }}</td>
+                            <td class="px-4 py-3 text-center font-semibold">{{ $document->revision_number ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->effectivity_date?->format('F d, Y') ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->document_location ?? 'N/A' }}</td>
                             <td class="px-4 py-3">
