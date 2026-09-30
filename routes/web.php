@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\DocumentTypeController;
 use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
+use App\Http\Controllers\Admin\FuncDivController;
 use App\Http\Controllers\Admin\FunctionalDivController;
+use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProcessController;
@@ -43,6 +45,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [GoogleAuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/forms-templates/print', [DocumentController::class, 'publicPrint'])->name('forms.print');
 
     Route::resource('draf', DrafController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::get('/draf/{draf}/print', [DrafController::class, 'print'])->name('draf.print');
@@ -95,6 +98,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('document-types.index');
     Route::post('/document-types', [DocumentTypeController::class, 'store'])->name('document-types.store');
     Route::put('/document-types/{documentType}', [DocumentTypeController::class, 'update'])->name('document-types.update');
+
+    Route::resource('func-divs', FuncDivController::class)->except(['show']);
+    Route::resource('offices', OfficeController::class)->except(['show']);
 
     Route::get('/planning-docs', [FunctionalDivController::class, 'index'])->name('planning-docs.index');
     Route::get('/planning-docs/functional-divisions/create', [FunctionalDivController::class, 'create'])->name('planning-docs.functional-divisions.create');

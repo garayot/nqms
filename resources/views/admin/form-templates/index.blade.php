@@ -22,7 +22,7 @@
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-3">
                 <div class="md:col-span-2">
                     <label for="search" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Search</label>
-                    <input id="search" name="search" value="{{ request('search') }}" placeholder="Search reference code, title, responsible, or location" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <input id="search" name="search" value="{{ request('search') }}" placeholder="Search reference code, title, originating office, or location" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
                 </div>
                 <div>
                     <label for="status" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Status</label>
@@ -62,8 +62,13 @@
                     <input name="doc_title" value="{{ old('doc_title') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
                 </div>
                 <div>
-                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Responsible</label>
-                    <input name="responsible" value="{{ old('responsible') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Originating Office</label>
+                    <select name="responsible" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" required>
+                        <option value="">Select originating office</option>
+                        @foreach ($functionalDivisions as $functionalDivision)
+                            <option value="{{ $functionalDivision->name }}" @selected(old('responsible') === $functionalDivision->name)>{{ $functionalDivision->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Revision Number</label>
@@ -75,7 +80,12 @@
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Document Location</label>
-                    <input name="document_location" value="{{ old('document_location') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <select name="document_location" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                        <option value="">Select document location</option>
+                        @foreach ($offices as $office)
+                            <option value="{{ $office->name }}" @selected(old('document_location') === $office->name)>{{ $office->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Doc Status</label>
@@ -110,7 +120,7 @@
                             <th class="px-4 py-3 font-semibold text-slate-700">Reference Code</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Document Type</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Title</th>
-                            <th class="px-4 py-3 font-semibold text-slate-700">Responsible</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Originating Office</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Revision</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Effectivity</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Location</th>
@@ -240,7 +250,7 @@
                     <button type="button" onclick="document.getElementById('csv-import-dialog').close()" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Close</button>
                 </div>
 
-                <p class="mb-2 text-sm text-slate-600">Required columns: document_type or document_type_id, document_reference_code, doc_title, responsible.</p>
+                <p class="mb-2 text-sm text-slate-600">Required columns: document_type or document_type_id, document_reference_code, doc_title, originating_office.</p>
                 <p class="mb-4 text-xs text-slate-500">Download the CSV template above to get the exact header format and sample values.</p>
 
                 <form method="POST" action="{{ route('admin.form-templates.import-csv') }}" enctype="multipart/form-data" class="space-y-4">

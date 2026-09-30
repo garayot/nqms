@@ -20,6 +20,7 @@
                     <thead class="bg-slate-50">
                         <tr>
                             <th class="px-4 py-3 font-semibold text-slate-700">Name</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">URL</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Processes</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Action</th>
                         </tr>
@@ -28,6 +29,13 @@
                         @forelse ($processGroups as $processGroup)
                             <tr>
                                 <td class="px-4 py-3">{{ $processGroup->process_group_name }}</td>
+                                <td class="px-4 py-3">
+                                    @if ($processGroup->url)
+                                        <a href="{{ $processGroup->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open Link</a>
+                                    @else
+                                        <span class="inline-flex rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600">No Link</span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3">{{ $processGroup->processes_count }}</td>
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap items-center gap-2">
@@ -43,7 +51,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-4 py-8 text-center text-slate-500">No process groups found.</td>
+                                <td colspan="4" class="px-4 py-8 text-center text-slate-500">No process groups found.</td>
                             </tr>
                         @endforelse
                     </tbody>

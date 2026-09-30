@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'office', 'role', 'position_id'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'office', 'office_id', 'functional_div_id', 'role', 'position_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -30,6 +30,8 @@ class User extends Authenticatable
         'google_id',
         'avatar',
         'office',
+        'office_id',
+        'functional_div_id',
         'role',
         'position_id',
         'email_verified_at',
@@ -77,6 +79,16 @@ class User extends Authenticatable
     public function position(): BelongsTo
     {
         return $this->belongsTo(Position::class);
+    }
+
+    public function officeLookup(): BelongsTo
+    {
+        return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function functionalDivLookup(): BelongsTo
+    {
+        return $this->belongsTo(FuncDiv::class, 'functional_div_id');
     }
 
     public function teamLeads(): HasMany

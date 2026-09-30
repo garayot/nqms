@@ -11,7 +11,7 @@
         </div>
 
         <form method="GET" class="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div>
                     <label for="search" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Search</label>
                     <div class="relative">
@@ -29,6 +29,26 @@
                         @endforeach
                     </select>
                 </div>
+
+                <div>
+                    <label for="originating_office" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Originating Office</label>
+                    <select id="originating_office" name="originating_office" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All originating offices</option>
+                        @foreach ($originatingOfficeOptions as $value => $label)
+                            <option value="{{ $value }}" @selected((string) request('originating_office') === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="office" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Location</label>
+                    <select id="office" name="office" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All locations</option>
+                        @foreach ($officeOptions as $value => $label)
+                            <option value="{{ $value }}" @selected((string) request('office') === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -41,6 +61,12 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+                    @auth
+                        <a href="{{ route('forms.print', request()->query()) }}" target="_blank" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Print List
+                        </a>
+                    @endauth
                     <a href="{{ url()->current() }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
                         Reset

@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\FormTemplate;
+use App\Models\FuncDiv;
+use App\Models\Office;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -49,11 +51,19 @@ class FormTemplateController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $functionalDivisions = FuncDiv::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $offices = Office::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         $statusOptions = collect(DocumentStatus::cases())
             ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
             ->all();
 
-        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments', 'importedReferenceCodes'));
+        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments', 'importedReferenceCodes', 'functionalDivisions', 'offices'));
     }
 
     public function store(Request $request)
@@ -100,7 +110,7 @@ class FormTemplateController extends Controller
             'document_type',
             'document_reference_code',
             'doc_title',
-            'responsible',
+            'originating_office',
             'revision_number',
             'effectivity_date',
             'document_location',
@@ -112,10 +122,10 @@ class FormTemplateController extends Controller
             'Form/Template',
             'SDO-OSDS-F001',
             'Sample Form Title',
-            'Schools Division Office',
+            'Planning Division',
             '01',
             '2026-09-25',
-            'Repository',
+            'Main Office',
             'active',
             'https://example.com/sample-form.pdf',
         ];
@@ -184,7 +194,7 @@ class FormTemplateController extends Controller
 
             $referenceCode = trim((string) ($rowData['document_reference_code'] ?? $rowData['reference_code'] ?? ''));
             $docTitle = trim((string) ($rowData['doc_title'] ?? $rowData['title'] ?? ''));
-            $responsible = trim((string) ($rowData['responsible'] ?? ''));
+            $responsible = trim((string) ($rowData['originating_office'] ?? $rowData['responsible'] ?? ''));
 
             if ($referenceCode === '' || $docTitle === '' || $responsible === '') {
                 $skipped++;

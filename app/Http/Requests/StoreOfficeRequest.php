@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProcessGroupRequest extends FormRequest
+class StoreOfficeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,8 +16,7 @@ class StoreProcessGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'process_group_name' => ['required', 'string', 'max:255'],
-            'url' => ['nullable', 'url', 'max:2048'],
+            'name' => ['required', 'string', 'max:255', 'unique:offices,name'],
         ];
     }
 }

@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProcessGroup extends Model
+class Office extends Model
 {
     protected $fillable = [
-        'process_group_name',
-        'url',
+        'name',
     ];
 
-    public function processes(): HasMany
+    public function users(): HasMany
     {
-        return $this->hasMany(Process::class);
+        return $this->hasMany(User::class, 'office_id');
     }
 }
