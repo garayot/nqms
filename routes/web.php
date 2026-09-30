@@ -45,6 +45,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [GoogleAuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/forms-templates/print', [DocumentController::class, 'publicPrint'])->name('forms.print');
 
     Route::resource('draf', DrafController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::get('/draf/{draf}/print', [DrafController::class, 'print'])->name('draf.print');
