@@ -5,7 +5,8 @@
         <a href="{{ route('draf.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">My Submissions</a>
         <a href="{{ route('forms.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Forms and Templates</a>
         @if (auth()->user()?->isAdmin())
-            <!-- <a href="{{ route('admin.drafs.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Admin: DRAFs</a> -->
+            <a href="{{ route('admin.qms-teams.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">QMS Teams</a>
+            <a href="{{ route('admin.positions.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Positions</a>
             <a href="{{ route('reviewer.drafs.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Review DRAFs</a>
             <a href="{{ route('approver.drafs.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Approver Queue</a>
             <a href="{{ route('admin.form-templates.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Forms / Templates</a>

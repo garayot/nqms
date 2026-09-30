@@ -9,11 +9,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'office', 'role'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'office', 'role', 'position_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -30,6 +31,7 @@ class User extends Authenticatable
         'avatar',
         'office',
         'role',
+        'position_id',
         'email_verified_at',
     ];
 
@@ -70,6 +72,26 @@ class User extends Authenticatable
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class, 'originating_office_id');
+    }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    public function teamLeads(): HasMany
+    {
+        return $this->hasMany(TeamLead::class);
+    }
+
+    public function teamMemberships(): HasMany
+    {
+        return $this->hasMany(TeamMember::class);
+    }
+
+    public function teamSecretariats(): HasMany
+    {
+        return $this->hasMany(TeamSecretariat::class);
     }
 
     public function isAdmin(): bool

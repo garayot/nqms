@@ -5,9 +5,14 @@ use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
 use App\Http\Controllers\Admin\FunctionalDivController;
 use App\Http\Controllers\Admin\PlanningDocController;
+use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProcessController;
 use App\Http\Controllers\Admin\ProcessGroupController;
 use App\Http\Controllers\Admin\SubProcessController;
+use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\TeamLeadController;
+use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\TeamSecretariatController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WhitelistController;
 use App\Http\Controllers\Approver\DrafApprovalController;
@@ -21,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/links', [HomeController::class, 'links'])->name('links');
 Route::get('/organization', [HomeController::class, 'organization'])->name('organization');
+Route::get('/organization/{team}', [TeamController::class, 'show'])->name('organization.show');
 Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
@@ -51,6 +57,27 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/drafs/{draf}', [DrafManagementController::class, 'show'])->name('drafs.show');
     Route::get('/drafs/{draf}/print', [DrafManagementController::class, 'print'])->name('drafs.print');
     Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
+
+    Route::resource('positions', PositionController::class)->except(['show']);
+
+    Route::prefix('qms-teams')->name('qms-teams.')->group(function (): void {
+        Route::get('/', [TeamController::class, 'index'])->name('index');
+        Route::get('/create', [TeamController::class, 'create'])->name('create');
+        Route::post('/', [TeamController::class, 'store'])->name('store');
+        Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
+        Route::put('/{team}', [TeamController::class, 'update'])->name('update');
+        Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+        Route::get('/{team}', [TeamController::class, 'show'])->name('show');
+
+        Route::post('/{team}/leads', [TeamLeadController::class, 'store'])->name('leads.store');
+        Route::delete('/{team}/leads/{teamLead}', [TeamLeadController::class, 'destroy'])->name('leads.destroy');
+
+        Route::post('/{team}/members', [TeamMemberController::class, 'store'])->name('members.store');
+        Route::delete('/{team}/members/{teamMember}', [TeamMemberController::class, 'destroy'])->name('members.destroy');
+
+        Route::post('/{team}/secretariat', [TeamSecretariatController::class, 'store'])->name('secretariat.store');
+        Route::delete('/{team}/secretariat/{teamSecretariat}', [TeamSecretariatController::class, 'destroy'])->name('secretariat.destroy');
+    });
 
     Route::get('/form-templates', [FormTemplateController::class, 'index'])->name('form-templates.index');
     Route::get('/form-templates/csv-template', [FormTemplateController::class, 'downloadCsvTemplate'])->name('form-templates.csv-template');
