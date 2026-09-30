@@ -14,6 +14,11 @@ class ProcessGroupController extends Controller
     public function index(): View
     {
         $processGroups = ProcessGroup::query()
+            ->with([
+                'processes' => fn ($query) => $query
+                    ->withCount('subProcesses')
+                    ->orderBy('id'),
+            ])
             ->withCount('processes')
             ->orderBy('id')
             ->paginate(12);
