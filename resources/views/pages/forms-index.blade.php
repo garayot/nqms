@@ -11,7 +11,7 @@
         </div>
 
         <form method="GET" class="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div>
                     <label for="search" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Search</label>
                     <div class="relative">
@@ -26,6 +26,26 @@
                         <option value="">All document types</option>
                         @foreach ($documentTypeOptions as $value => $label)
                             <option value="{{ $value }}" @selected((string) request('document_type_id') === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="originating_office" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Originating Office</label>
+                    <select id="originating_office" name="originating_office" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All originating offices</option>
+                        @foreach ($originatingOfficeOptions as $value => $label)
+                            <option value="{{ $value }}" @selected((string) request('originating_office') === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="office" class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Location</label>
+                    <select id="office" name="office" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none ring-0 focus:border-[#0f3d68]">
+                        <option value="">All locations</option>
+                        @foreach ($officeOptions as $value => $label)
+                            <option value="{{ $value }}" @selected((string) request('office') === (string) $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
