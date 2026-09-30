@@ -21,7 +21,16 @@
                 <section class="operations-group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-search="{{ strtolower($processGroup->process_group_name) }}" data-expanded="false">
                     <h2>
                         <button type="button" class="operations-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-4 text-left text-lg font-semibold text-[#0f3d68] transition-colors hover:bg-blue-100" aria-expanded="false" aria-controls="operations-group-panel-{{ $processGroup->id }}" id="operations-group-trigger-{{ $processGroup->id }}">
-                            <span>Process Group: {{ $processGroup->process_group_name }}</span>
+                            <span class="flex-1">Process Group: {{ $processGroup->process_group_name }}</span>
+
+                            <div class="flex items-center gap-2">
+                                @if ($processGroup->url)
+                                    <a href="{{ $processGroup->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open Process Group Link</a>
+                                @else
+                                    <span class="inline-flex rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600">No Link</span>
+                                @endif
+                            </div>
+
                             <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-[#0f3d68] transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
                             </svg>
@@ -30,11 +39,7 @@
 
                     <div id="operations-group-panel-{{ $processGroup->id }}" role="region" aria-labelledby="operations-group-trigger-{{ $processGroup->id }}" class="operations-panel grid grid-rows-[0fr] overflow-hidden transition-all duration-300 ease-in-out opacity-0">
                         <div class="overflow-hidden p-4">
-                            @if ($processGroup->url)
-                                <div class="mb-4 flex justify-end">
-                                    <a href="{{ $processGroup->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open Process Group Link</a>
-                                </div>
-                            @endif
+                            
                         @forelse ($processGroup->processes as $process)
                             <section class="operations-process overflow-hidden rounded-xl border border-slate-200" data-search="{{ strtolower($process->process_name) }}" data-expanded="false">
                                 <h3>
