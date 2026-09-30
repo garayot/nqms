@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FunctionalDiv;
 use App\Models\ProcessGroup;
 
 class HomeController extends Controller
@@ -33,5 +34,17 @@ class HomeController extends Controller
             ->get();
 
         return view('pages.operations-manual', compact('processGroups'));
+    }
+
+    public function planningDocs()
+    {
+        $functionalDivs = FunctionalDiv::query()
+            ->with([
+                'planningDocs' => fn ($query) => $query->orderBy('name'),
+            ])
+            ->orderBy('name')
+            ->get();
+
+        return view('pages.planning-docs', compact('functionalDivs'));
     }
 }
