@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Models\Office;
 use App\Models\User;
 use App\Models\WhitelistedUser;
 use Illuminate\Http\Request;
@@ -30,6 +31,11 @@ class GoogleAuthController extends Controller
         $whitelisted = WhitelistedUser::active()->where('email', $email)->first();
         $existingUser = User::where('email', $email)->first();
 
+        $officeName = $whitelisted?->office ?? $existingUser?->office;
+        $office = filled($officeName)
+            ? Office::query()->firstOrCreate(['name' => $officeName])
+            : null;
+
         if (! $whitelisted && ! $existingUser) {
             return view('auth.account-not-authorized', [
                 'message' => 'Your account is not yet authorized. Please contact the system administrator.',
@@ -41,7 +47,8 @@ class GoogleAuthController extends Controller
             'email' => $email,
             'google_id' => $googleUser->getId(),
             'avatar' => $googleUser->getAvatar(),
-            'office' => $whitelisted?->office,
+            'office' => $office?->name ?? $whitelisted?->office,
+            'office_id' => $office?->id,
             'role' => UserRole::USER->value,
             'email_verified_at' => now(),
         ]);
@@ -50,7 +57,8 @@ class GoogleAuthController extends Controller
             'name' => $googleUser->getName(),
             'google_id' => $googleUser->getId(),
             'avatar' => $googleUser->getAvatar(),
-            'office' => $whitelisted?->office ?? $user->office,
+            'office' => $office?->name ?? $user->office,
+            'office_id' => $office?->id ?? $user->office_id,
             'email_verified_at' => $user->email_verified_at ?? now(),
         ]);
 

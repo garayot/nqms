@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DocumentTypeController;
 use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
 use App\Http\Controllers\Admin\FunctionalDivController;
+use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProcessController;
@@ -95,6 +96,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('document-types.index');
     Route::post('/document-types', [DocumentTypeController::class, 'store'])->name('document-types.store');
     Route::put('/document-types/{documentType}', [DocumentTypeController::class, 'update'])->name('document-types.update');
+
+    Route::resource('offices', OfficeController::class)->except(['show']);
 
     Route::get('/planning-docs', [FunctionalDivController::class, 'index'])->name('planning-docs.index');
     Route::get('/planning-docs/functional-divisions/create', [FunctionalDivController::class, 'create'])->name('planning-docs.functional-divisions.create');
