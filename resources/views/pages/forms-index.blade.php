@@ -64,6 +64,7 @@
                         <th class="px-4 py-3 text-center font-bold">Revision Number</th>
                         <th class="px-4 py-3 text-center font-bold">Effectivity Date</th>
                         <th class="px-4 py-3 text-center font-bold">Location</th>
+                        <th class="px-4 py-3 text-center font-bold">Status</th>
                         <th class="px-4 py-3 text-center font-bold">Action</th>
                     </tr>
                 </thead>
@@ -80,6 +81,19 @@
                             <td class="px-4 py-3 text-center font-semibold">{{ $document->revision_number ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->effectivity_date?->format('F d, Y') ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->document_location ?? 'N/A' }}</td>
+                            <td class="px-4 py-3">
+                                @php
+                                    $statusValue = $document->status instanceof \BackedEnum ? $document->status->value : (string) $document->status;
+                                    $statusLabel = $document->status instanceof \BackedEnum ? $document->status->label() : ucfirst($statusValue);
+                                    $statusClasses = $statusValue === 'active'
+                                        ? 'bg-blue-100 text-blue-700 ring-blue-200'
+                                        : 'bg-amber-100 text-amber-700 ring-amber-200';
+                                @endphp
+
+                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset {{ $statusClasses }}">
+                                    {{ $statusLabel }}
+                                </span>
+                            </td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end">
                                     @if ($document->downloadable_attachment_path)
