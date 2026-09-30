@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
-use App\Models\FunctionalDiv;
+use App\Models\FuncDiv;
 use App\Models\Office;
 use App\Models\Position;
 use App\Models\User;
@@ -37,7 +37,7 @@ class UserManagementController extends Controller
             ->orderBy('name')
             ->get();
 
-        $functionalDivs = FunctionalDiv::query()
+        $functionalDivs = FuncDiv::query()
             ->orderBy('name')
             ->get();
 
@@ -56,7 +56,7 @@ class UserManagementController extends Controller
             'role' => ['required', 'in:'.implode(',', array_map(fn ($case) => $case->value, UserRole::cases()))],
             'position_id' => ['nullable', 'exists:positions,id'],
             'office_id' => ['nullable', 'exists:offices,id'],
-            'functional_div_id' => ['nullable', 'exists:functional_div,id'],
+            'functional_div_id' => ['nullable', 'exists:func_div,id'],
         ]);
 
         $office = filled($request->office_id)

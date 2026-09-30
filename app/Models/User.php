@@ -88,7 +88,7 @@ class User extends Authenticatable
 
     public function functionalDivLookup(): BelongsTo
     {
-        return $this->belongsTo(FunctionalDiv::class, 'functional_div_id');
+        return $this->belongsTo(FuncDiv::class, 'functional_div_id');
     }
 
     public function teamLeads(): HasMany
