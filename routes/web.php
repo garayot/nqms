@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\DocumentTypeController;
 use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
+use App\Http\Controllers\Admin\FunctionalDivController;
+use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\ProcessController;
 use App\Http\Controllers\Admin\ProcessGroupController;
 use App\Http\Controllers\Admin\SubProcessController;
@@ -65,6 +67,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('document-types.index');
     Route::post('/document-types', [DocumentTypeController::class, 'store'])->name('document-types.store');
     Route::put('/document-types/{documentType}', [DocumentTypeController::class, 'update'])->name('document-types.update');
+
+    Route::get('/planning-docs', [FunctionalDivController::class, 'index'])->name('planning-docs.index');
+    Route::get('/planning-docs/functional-divisions/create', [FunctionalDivController::class, 'create'])->name('planning-docs.functional-divisions.create');
+    Route::post('/planning-docs/functional-divisions', [FunctionalDivController::class, 'store'])->name('planning-docs.functional-divisions.store');
+    Route::get('/planning-docs/functional-divisions/{functionalDiv}/edit', [FunctionalDivController::class, 'edit'])->name('planning-docs.functional-divisions.edit');
+    Route::put('/planning-docs/functional-divisions/{functionalDiv}', [FunctionalDivController::class, 'update'])->name('planning-docs.functional-divisions.update');
+    Route::delete('/planning-docs/functional-divisions/{functionalDiv}', [FunctionalDivController::class, 'destroy'])->name('planning-docs.functional-divisions.destroy');
+
+    Route::get('/planning-docs/functional-divisions/{functionalDiv}/planning-docs/create', [PlanningDocController::class, 'create'])->name('planning-docs.documents.create');
+    Route::post('/planning-docs/functional-divisions/{functionalDiv}/planning-docs', [PlanningDocController::class, 'store'])->name('planning-docs.documents.store');
+    Route::get('/planning-docs/functional-divisions/{functionalDiv}/planning-docs/{planningDoc}/edit', [PlanningDocController::class, 'edit'])->name('planning-docs.documents.edit');
+    Route::put('/planning-docs/functional-divisions/{functionalDiv}/planning-docs/{planningDoc}', [PlanningDocController::class, 'update'])->name('planning-docs.documents.update');
+    Route::delete('/planning-docs/functional-divisions/{functionalDiv}/planning-docs/{planningDoc}', [PlanningDocController::class, 'destroy'])->name('planning-docs.documents.destroy');
 
     Route::get('/operations-manual', [ProcessGroupController::class, 'index'])->name('operations-manual.index');
     Route::get('/operations-manual/process-groups/create', [ProcessGroupController::class, 'create'])->name('operations-manual.process-groups.create');
