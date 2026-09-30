@@ -19,6 +19,7 @@
                         <th class="px-4 py-3 font-semibold text-slate-700">Name</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Email</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Office</th>
+                        <th class="px-4 py-3 font-semibold text-slate-700">Position</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Role</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Update</th>
                     </tr>
@@ -29,22 +30,30 @@
                             <td class="px-4 py-3">{{ $user->name }}</td>
                             <td class="px-4 py-3">{{ $user->email }}</td>
                             <td class="px-4 py-3">{{ $user->office ?? 'N/A' }}</td>
-                            <td class="px-4 py-3">{{ $user->role?->label() ?? $user->role }}</td>
+                            <td class="px-4 py-3">{{ $user->position?->position_name ?? 'N/A' }}</td>
                             <td class="px-4 py-3">
                                 <form method="POST" action="{{ route('admin.users.role', $user) }}" class="flex gap-2">
                                     @csrf
-                                    <select name="role" class="rounded-lg border border-slate-300 px-2 py-2 text-sm">
-                                        @foreach ($roles as $role)
-                                            <option value="{{ $role->value }}" {{ $user->role?->value === $role->value ? 'selected' : '' }}>{{ $role->label() }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Save</button>
+                                    <div class="flex flex-wrap gap-2">
+                                        <select name="position_id" class="rounded-lg border border-slate-300 px-2 py-2 text-sm">
+                                            <option value="">No position</option>
+                                            @foreach ($positions as $position)
+                                                <option value="{{ $position->id }}" @selected((string) $user->position_id === (string) $position->id)>{{ $position->position_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select name="role" class="rounded-lg border border-slate-300 px-2 py-2 text-sm">
+                                            @foreach ($roles as $role)
+                                                <option value="{{ $role->value }}" {{ $user->role?->value === $role->value ? 'selected' : '' }}>{{ $role->label() }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">Save</button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-500">No users found.</td>
+                            <td colspan="6" class="px-4 py-8 text-center text-slate-500">No users found.</td>
                         </tr>
                     @endforelse
                 </tbody>

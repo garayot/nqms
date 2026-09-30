@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FunctionalDiv;
 use App\Models\ProcessGroup;
+use App\Models\Team;
 
 class HomeController extends Controller
 {
@@ -19,7 +20,16 @@ class HomeController extends Controller
 
     public function organization()
     {
-        return view('pages.organization');
+        $teams = Team::query()
+            ->withCount([
+                'teamLeads',
+                'teamMembers',
+                'teamSecretariat',
+            ])
+            ->orderBy('team_name')
+            ->get();
+
+        return view('pages.organization', compact('teams'));
     }
 
     public function operationsManual()
