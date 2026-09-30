@@ -30,6 +30,11 @@
 
                     <div id="operations-group-panel-{{ $processGroup->id }}" role="region" aria-labelledby="operations-group-trigger-{{ $processGroup->id }}" class="operations-panel grid grid-rows-[0fr] overflow-hidden transition-all duration-300 ease-in-out opacity-0">
                         <div class="overflow-hidden p-4">
+                            @if ($processGroup->url)
+                                <div class="mb-4 flex justify-end">
+                                    <a href="{{ $processGroup->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open Process Group Link</a>
+                                </div>
+                            @endif
                         @forelse ($processGroup->processes as $process)
                             <section class="operations-process overflow-hidden rounded-xl border border-slate-200" data-search="{{ strtolower($process->process_name) }}" data-expanded="false">
                                 <h3>

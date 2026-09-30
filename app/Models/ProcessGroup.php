@@ -9,6 +9,7 @@ class ProcessGroup extends Model
 {
     protected $fillable = [
         'process_group_name',
+        'url',
     ];
 
     public function processes(): HasMany

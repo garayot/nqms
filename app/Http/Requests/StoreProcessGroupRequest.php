@@ -17,6 +17,7 @@ class StoreProcessGroupRequest extends FormRequest
     {
         return [
             'process_group_name' => ['required', 'string', 'max:255'],
+            'url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 }
