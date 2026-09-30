@@ -21,7 +21,7 @@
                 <p class="text-sm text-slate-500">No teams have been created yet.</p>
             </div>
         @else
-            <div class="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            <div class="grid gap-6 lg:grid-cols-2 xl:grid-cols-2">
                 @foreach ($teams as $team)
                     <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="flex items-start justify-between gap-4">
