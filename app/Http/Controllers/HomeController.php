@@ -18,6 +18,11 @@ class HomeController extends Controller
         return view('pages.links');
     }
 
+    public function qps()
+    {
+        return view('pages.qps');
+    }
+
     public function organization()
     {
         $teams = Team::query()

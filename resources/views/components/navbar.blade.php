@@ -10,7 +10,23 @@
         </a>
 
         <div class="hidden min-w-0 items-center justify-center gap-2 text-sm font-medium text-slate-700 md:flex md:w-full md:flex-wrap md:justify-center lg:gap-4 xl:gap-6">
-            <a href="{{ route('home') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Home</a>
+            <div class="relative flex items-center gap-1 px-1 py-1 group">
+                <a href="{{ route('home') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]" aria-haspopup="true">Home</a>
+                <button type="button" class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700" aria-label="Show Home submenu">
+                    <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 12 12">
+                        <path d="M10 3.586 11.414 5 6 10.414.586 5 2 3.586l4 4z" />
+                    </svg>
+                </button>
+
+                <ul class="invisible absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <li>
+                        <a href="{{ route('organization') }}" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]">QMS Org Chart</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('qps') }}" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]">QPS</a>
+                    </li>
+                </ul>
+            </div>
             <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">NQMS Manual</a>
             <a href="{{ route('planning-docs') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Planning Docs</a>
             <a href="{{ route('operations-manual') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Operations Manual</a>
@@ -36,6 +52,8 @@
                 <div class="absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border border-slate-200 bg-white p-2 shadow-lg ring-1 ring-slate-200/60">
                     <div class="flex flex-col text-sm font-medium text-slate-700">
                         <a href="{{ route('home') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Home</a>
+                        <a href="{{ route('organization') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QMS Org Chart</a>
+                        <a href="{{ route('qps') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QPS</a>
                         <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">NQMS Manual</a>
                         <a href="{{ route('planning-docs') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Planning Docs</a>
                         <a href="{{ route('operations-manual') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Operations Manual</a>
