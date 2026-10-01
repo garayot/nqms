@@ -26,6 +26,7 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/qps', [HomeController::class, 'qps'])->name('qps');
 Route::get('/links', [HomeController::class, 'links'])->name('links');
 Route::get('/organization', [HomeController::class, 'organization'])->name('organization');
 Route::get('/organization/{team}', [TeamController::class, 'show'])->name('organization.show');
