@@ -42,7 +42,7 @@
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 class="text-xl font-semibold text-slate-900">Add Form / Template</h2>
-            <form method="POST" action="{{ route('admin.form-templates.store') }}" enctype="multipart/form-data" class="mt-6 grid gap-4 md:grid-cols-2">
+            <form method="POST" action="{{ route('admin.form-templates.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Document Type</label>
@@ -71,6 +71,11 @@
                     </select>
                 </div>
                 <div>
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Person Responsible</label>
+                    <input value="{{ auth()->user()?->name ?? 'N/A' }}" class="w-full rounded-lg border border-slate-300 bg-slate-100 px-3 py-2.5 text-sm text-slate-700" disabled>
+                    <p class="mt-1 text-xs text-slate-500">Automatically set to the uploader when saved.</p>
+                </div>
+                <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Revision Number</label>
                     <input name="revision_number" value="{{ old('revision_number') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
                 </div>
@@ -95,13 +100,9 @@
                     </select>
                 </div>
                 <div>
-                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Downloadable Attachment</label>
-                    <input type="file" name="downloadable_attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
-                    <p class="mt-1 text-xs text-slate-500">Upload a file or provide a URL below.</p>
-                </div>
-                <div>
                     <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Downloadable Attachment URL</label>
                     <input type="url" name="downloadable_attachment_url" value="{{ old('downloadable_attachment_url') }}" placeholder="https://example.com/file.pdf" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <p class="mt-1 text-xs text-slate-500">Provide a public URL for the form/template file.</p>
                 </div>
                 <div class="md:col-span-2">
                     <button type="submit" class="rounded-lg bg-[#0f3d68] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0b2f52]">Save Form / Template</button>
@@ -121,6 +122,7 @@
                             <th class="px-4 py-3 font-semibold text-slate-700">Document Type</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Title</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Originating Office</th>
+                            <th class="px-4 py-3 font-semibold text-slate-700">Person Responsible</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Revision</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Effectivity</th>
                             <th class="px-4 py-3 font-semibold text-slate-700">Location</th>
@@ -142,6 +144,7 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-3">{{ $template->responsible }}</td>
+                                <td class="px-4 py-3">{{ $template->uploader?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $template->revision_number ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $template->effectivity_date?->format('M d, Y') ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $template->document_location ?? 'N/A' }}</td>
@@ -165,7 +168,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="px-4 py-8 text-center text-slate-500">No forms or templates found.</td>
+                                <td colspan="10" class="px-4 py-8 text-center text-slate-500">No forms or templates found.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -217,16 +220,23 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if (in_array($document->draf?->reference_code, $importedReferenceCodes, true))
-                                        <span class="inline-flex rounded-lg bg-emerald-100 px-3 py-2 text-xs font-semibold text-emerald-700">Already imported</span>
-                                    @elseif ($document->draf?->reference_code)
-                                        <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
-                                            @csrf
-                                            <button type="submit" class="rounded-lg bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white hover:bg-[#0b2f52]">Import to Repository</button>
-                                        </form>
-                                    @else
-                                        <span class="text-slate-500">Unavailable</span>
-                                    @endif
+                                    <div class="flex items-center gap-2">
+                                        @if (! $document->draf)
+                                            <span class="text-slate-500">Unavailable</span>
+                                        @elseif ($document->draf?->reference_code)
+                                            <a href="{{ route('admin.drafs.edit', $document->draf) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">Edit DRAF</a>
+                                        @else
+                                            <a href="{{ route('admin.drafs.edit', $document->draf) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">Add Details</a>
+                                        @endif
+                                        @if ($document->draf && in_array($document->draf?->reference_code, $importedReferenceCodes, true))
+                                            <span class="inline-flex rounded-lg bg-emerald-100 px-3 py-2 text-xs font-semibold text-emerald-700">Already imported</span>
+                                        @elseif ($document->draf?->reference_code)
+                                            <form method="POST" action="{{ route('admin.form-templates.import', $document) }}">
+                                                @csrf
+                                                <button type="submit" class="rounded-lg bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white hover:bg-[#0b2f52]">Import to Repository</button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

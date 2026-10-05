@@ -28,9 +28,10 @@ class Draf extends Model
         'current_revision_no',
         'reason_id',
         'reason',
+        'open_ended_reason',
         'requested_by',
         'date_requested',
-        'attachment_path',
+        'attachment_url',
         'status',
         'review',
         'reason1',
@@ -43,7 +44,7 @@ class Draf extends Model
         'new_revision_number',
         'effectivity_date',
         'date_registered',
-        'approved_attachment_path',
+        'approved_attachment_url',
     ];
 
     protected $casts = [

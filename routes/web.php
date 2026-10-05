@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
 use App\Http\Controllers\Admin\FuncDivController;
 use App\Http\Controllers\Admin\FunctionalDivController;
+use App\Http\Controllers\Admin\NqmsManualController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\PositionController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DrafController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PublicFileAccessController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,6 +35,13 @@ Route::get('/organization/{team}', [TeamController::class, 'show'])->name('organ
 Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
+Route::get('/nqms-manuals', [DocumentController::class, 'publicNqmsManualIndex'])->name('nqms-manuals.index');
+Route::get('/access/forms-templates/{formTemplate}', [PublicFileAccessController::class, 'formTemplate'])->name('public.file-access.form-templates');
+Route::get('/access/nqms-manuals/{nqmsManual}', [PublicFileAccessController::class, 'nqmsManual'])->name('public.file-access.nqms-manuals');
+Route::get('/access/planning-divisions/{functionalDiv}', [PublicFileAccessController::class, 'planningDivision'])->name('public.file-access.planning-divisions');
+Route::get('/access/planning-docs/{planningDoc}', [PublicFileAccessController::class, 'planningDoc'])->name('public.file-access.planning-docs');
+Route::get('/access/process-groups/{processGroup}', [PublicFileAccessController::class, 'processGroup'])->name('public.file-access.process-groups');
+Route::get('/access/sub-processes/{subProcess}', [PublicFileAccessController::class, 'subProcess'])->name('public.file-access.sub-processes');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
@@ -60,6 +69,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/drafs', [DrafManagementController::class, 'index'])->name('drafs.index');
     Route::get('/drafs/{draf}', [DrafManagementController::class, 'show'])->name('drafs.show');
     Route::get('/drafs/{draf}/print', [DrafManagementController::class, 'print'])->name('drafs.print');
+    Route::get('/drafs/{draf}/edit', [DrafManagementController::class, 'edit'])->name('drafs.edit');
+    Route::put('/drafs/{draf}', [DrafManagementController::class, 'update'])->name('drafs.update');
     Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
 
     Route::resource('positions', PositionController::class)->except(['show']);
@@ -88,6 +99,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/form-templates', [FormTemplateController::class, 'store'])->name('form-templates.store');
     Route::post('/form-templates/import-csv', [FormTemplateController::class, 'importCsv'])->name('form-templates.import-csv');
     Route::post('/form-templates/import/{document}', [FormTemplateController::class, 'importFromDocument'])->name('form-templates.import');
+
+    Route::get('/nqms-manuals', [NqmsManualController::class, 'index'])->name('nqms-manuals.index');
+    Route::post('/nqms-manuals', [NqmsManualController::class, 'store'])->name('nqms-manuals.store');
+    Route::get('/nqms-manuals/{nqmsManual}/edit', [NqmsManualController::class, 'edit'])->name('nqms-manuals.edit');
+    Route::put('/nqms-manuals/{nqmsManual}', [NqmsManualController::class, 'update'])->name('nqms-manuals.update');
+    Route::delete('/nqms-manuals/{nqmsManual}', [NqmsManualController::class, 'destroy'])->name('nqms-manuals.destroy');
 
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.role');

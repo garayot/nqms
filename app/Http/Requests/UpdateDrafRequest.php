@@ -12,13 +12,13 @@ class UpdateDrafRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        return $this->user() !== null;
     }
 
     public function rules(): array
     {
         return [
-            'draf_number' => ['required', 'string', 'max:255', Rule::unique('drafs', 'draf_number')->ignore($this->route('draf'))],
+            'draf_number' => ['nullable', 'string', 'max:255', Rule::unique('drafs', 'draf_number')->ignore($this->route('draf'))],
             'source' => ['required', Rule::in(array_map(fn ($case) => $case->value, DrafSource::cases()))],
             'request_for' => ['required', Rule::in(array_map(fn ($case) => $case->value, DrafRequestType::cases()))],
             'doc_type_id' => ['required', 'exists:document_types,id'],
@@ -26,10 +26,10 @@ class UpdateDrafRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'reference_code' => ['nullable', 'string', 'max:255'],
             'current_revision_no' => ['required', 'string', 'max:50'],
-            'reason_id' => ['required', 'exists:reasons,id'],
-            'requested_by' => ['required', 'exists:users,id'],
+            'reason_id' => ['nullable', 'exists:reasons,id', 'required_without:open_ended_reason'],
+            'open_ended_reason' => ['nullable', 'string', 'max:4000', 'required_without:reason_id'],
             'date_requested' => ['required', 'date'],
-            'attachment' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:2048'],
+            'attachment_url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 }

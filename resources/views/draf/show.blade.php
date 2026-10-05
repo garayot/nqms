@@ -37,10 +37,10 @@
                     <div class="flex justify-between gap-4"><dt>Current Revision</dt><dd>{{ $draf->current_revision_no }}</dd></div>
                     <div class="flex justify-between gap-4"><dt>Requested By</dt><dd>{{ $draf->requestedBy?->name ?? 'N/A' }}</dd></div>
                     <div class="flex justify-between gap-4"><dt>Date Requested</dt><dd>{{ $draf->date_requested?->format('M d, Y') ?? 'N/A' }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt>Attachment</dt><dd>{{ $draf->attachment_path ? 'Available' : 'No attachment' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt>Attachment</dt><dd>{{ $draf->attachment_url ? 'Available' : 'No attachment' }}</dd></div>
                 </dl>
-                @if ($draf->attachment_path)
-                    <a href="{{ Storage::url($draf->attachment_path) }}" target="_blank" class="mt-5 inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">Open Attachment</a>
+                @if ($draf->attachment_url)
+                    <a href="{{ $draf->attachment_url }}" target="_blank" class="mt-5 inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">Open Attachment</a>
                 @endif
             </div>
 

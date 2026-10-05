@@ -11,6 +11,7 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Draf;
 use App\Models\FormTemplate;
+use App\Models\FuncDiv;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -33,7 +34,7 @@ class FormTemplateRepositoryTest extends TestCase
         $response->assertOk();
         $this->assertStringContainsString('form-templates-import-template.csv', (string) $response->headers->get('content-disposition'));
         $this->assertStringContainsString('text/csv', (string) $response->headers->get('content-type'));
-        $this->assertStringContainsString('document_type,document_reference_code,doc_title,responsible', $response->streamedContent());
+        $this->assertStringContainsString('document_type,document_reference_code,doc_title,originating_office,person_responsible', $response->streamedContent());
     }
 
     public function test_admin_can_create_a_form_template_using_attachment_url(): void
@@ -71,8 +72,6 @@ class FormTemplateRepositoryTest extends TestCase
 
     public function test_admin_can_create_a_form_template_and_public_repository_shows_it(): void
     {
-        Storage::fake('public');
-
         /** @var User $admin */
         $admin = User::factory()->create([
             'role' => UserRole::ADMIN,
@@ -93,20 +92,50 @@ class FormTemplateRepositoryTest extends TestCase
             'effectivity_date' => '2026-09-25',
             'document_location' => 'Records Room',
             'status' => DocumentStatus::ACTIVE->value,
-            'downloadable_attachment' => UploadedFile::fake()->create('template.pdf', 100, 'application/pdf'),
+            'downloadable_attachment_url' => 'https://example.com/template.pdf',
         ]);
 
         $response->assertRedirect();
 
-        $template = FormTemplate::query()->firstOrFail();
-
-        $this->assertTrue(Storage::disk('public')->exists($template->downloadable_attachment_path));
+        $this->assertDatabaseHas('form_templates', [
+            'document_reference_code' => 'FT-001',
+            'downloadable_attachment_path' => 'https://example.com/template.pdf',
+        ]);
 
         $this->get(route('forms.index'))
             ->assertOk()
             ->assertSee('Quality Control Plan Template')
             ->assertSee('Form/Template')
             ->assertSee('FT-001');
+    }
+
+    public function test_authenticated_user_can_open_forms_print_preview_with_selected_document_type(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'role' => UserRole::ADMIN,
+        ]);
+
+        $documentType = DocumentType::create([
+            'name' => 'Form/Template',
+            'description' => 'Standardized forms and templates.',
+            'is_active' => true,
+        ]);
+
+        FormTemplate::create([
+            'document_type_id' => $documentType->id,
+            'document_reference_code' => 'PRINT-001',
+            'doc_title' => 'Printable Template',
+            'responsible' => 'QMS Unit',
+            'status' => DocumentStatus::ACTIVE->value,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('forms.print', ['document_type_id' => $documentType->id]))
+            ->assertOk()
+            ->assertSee('Document Master List')
+            ->assertSee('Document Type')
+            ->assertSee('Form/Template');
     }
 
     public function test_admin_can_import_a_registered_document_into_form_templates(): void
@@ -118,8 +147,13 @@ class FormTemplateRepositoryTest extends TestCase
             'role' => UserRole::ADMIN,
         ]);
 
+        $functionalDivision = FuncDiv::create([
+            'name' => 'Curriculum Implementation Division',
+        ]);
+
         $requester = User::factory()->create([
-            'office' => 'Curriculum Implementation Division',
+            'office' => 'Schools Division Office',
+            'functional_div_id' => $functionalDivision->id,
         ]);
 
         $documentType = DocumentType::create([
@@ -144,7 +178,7 @@ class FormTemplateRepositoryTest extends TestCase
             'new_revision_number' => '03',
             'effectivity_date' => '2026-09-09',
             'date_registered' => '2026-09-09',
-            'approved_attachment_path' => 'documents/final/sample.pdf',
+            'approved_attachment_url' => 'https://example.com/sample.pdf',
         ]);
 
         $document = Document::create([
@@ -214,7 +248,7 @@ class FormTemplateRepositoryTest extends TestCase
             'new_revision_number' => '01',
             'effectivity_date' => '2026-09-25',
             'date_registered' => '2026-09-25',
-            'approved_attachment_path' => 'documents/final/imported.pdf',
+            'approved_attachment_url' => 'https://example.com/imported.pdf',
         ]);
 
         Document::create([
@@ -246,8 +280,8 @@ class FormTemplateRepositoryTest extends TestCase
         ]);
 
         $csv = implode("\n", [
-            'document_type,document_reference_code,doc_title,responsible,revision_number,effectivity_date,document_location,status,downloadable_attachment_url',
-            'Form/Template,CSV-001,CSV Imported Template,Records Office,01,2026-09-25,Repository,active,https://example.com/csv-template.pdf',
+            'document_type,document_reference_code,doc_title,originating_office,person_responsible,revision_number,effectivity_date,document_location,status,downloadable_attachment_url',
+            'Form/Template,CSV-001,CSV Imported Template,Records Office,John Doe,01,2026-09-25,Repository,active,https://example.com/csv-template.pdf',
         ]);
 
         $file = UploadedFile::fake()->createWithContent('form-templates.csv', $csv);
@@ -261,6 +295,7 @@ class FormTemplateRepositoryTest extends TestCase
         $this->assertDatabaseHas('form_templates', [
             'document_reference_code' => 'CSV-001',
             'doc_title' => 'CSV Imported Template',
+            'created_by' => $admin->id,
             'downloadable_attachment_path' => 'https://example.com/csv-template.pdf',
         ]);
     }

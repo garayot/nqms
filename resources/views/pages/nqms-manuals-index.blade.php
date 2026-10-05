@@ -5,8 +5,8 @@
         <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Public Repository</p>
-                <h1 class="mt-2 text-3xl font-bold text-slate-900">Forms and Templates</h1>
-                <p class="mt-2 max-w-2xl text-sm text-slate-600">Browse active forms and templates uploaded by administrators.</p>
+                <h1 class="mt-2 text-3xl font-bold text-slate-900">NQMS Manual</h1>
+                <p class="mt-2 max-w-2xl text-sm text-slate-600">Browse active NQMS Manual documents uploaded by administrators.</p>
             </div>
         </div>
 
@@ -61,12 +61,6 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 sm:justify-end">
-                    @auth
-                        <a href="{{ route('forms.print', request()->query()) }}" target="_blank" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                            Print List
-                        </a>
-                    @endauth
                     <a href="{{ url()->current() }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
                         Reset
@@ -100,7 +94,6 @@
                             <td class="px-4 py-3 font-semibold text-slate-900">{{ $document->document_reference_code }}</td>
                             <td class="px-4 py-3">
                                 <div class="font-semibold text-slate-900">{{ $document->doc_title }}</div>
-                                <!-- <div class="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $document->status->label() }}</div> -->
                             </td>
                             <td class="px-4 py-3">{{ $document->responsible }}</td>
                             <td class="px-4 py-3">{{ $document->uploader?->name ?? 'N/A' }}</td>
@@ -122,10 +115,10 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end">
-                                    @if ($document->downloadable_attachment_path)
-                                        <a href="{{ route('public.file-access.form-templates', $document) }}" class="inline-flex items-center gap-2 rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">
+                                    @if ($document->downloadable_attachment_url)
+                                        <a href="{{ route('public.file-access.nqms-manuals', $document) }}" class="inline-flex items-center gap-2 rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">
                                             @auth
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download preview-icon h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
                                                 <span>Download</span>
                                             @else
                                                 <span>Login to download</span>
@@ -139,7 +132,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-8 text-center text-slate-500">No forms or templates are currently available.</td>
+                            <td colspan="9" class="px-4 py-8 text-center text-slate-500">No NQMS manual documents are currently available.</td>
                         </tr>
                     @endforelse
                 </tbody>

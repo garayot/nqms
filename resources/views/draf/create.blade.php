@@ -7,12 +7,12 @@
             <p class="mt-2 text-sm text-slate-600">Complete Section 1 of the Document Review and Approval Form.</p>
         </div>
 
-        <form method="POST" action="{{ route('draf.store') }}" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="{{ route('draf.store') }}" class="space-y-6">
             @csrf
 
             <div class="grid gap-6 lg:grid-cols-2">
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">DRAF Number</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">DRAF Number <span class="text-slate-400">(Optional)</span></label>
                     <input name="draf_number" value="{{ old('draf_number') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
@@ -56,7 +56,7 @@
                     <input name="title" value="{{ old('title') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Reference Code</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Reference Code <span class="text-slate-400">(Optional)</span></label>
                     <input name="reference_code" value="{{ old('reference_code') }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
@@ -65,7 +65,7 @@
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Requested By</label>
-                    <input name="requested_by" value="{{ old('requested_by', auth()->id()) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                    <input type="text" value="{{ auth()->user()->name }}" disabled class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Date Requested</label>
@@ -73,16 +73,21 @@
                 </div>
                 <div class="lg:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Reason</label>
-                    <select name="reason_id" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
-                        <option value="">Select</option>
+                    <select name="reason_id" id="reason_select" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                        <option value="">Select a predefined reason or enter custom reason below</option>
                         @foreach ($reasons as $reason)
                             <option value="{{ $reason->id }}" {{ (string) old('reason_id') === (string) $reason->id ? 'selected' : '' }}>{{ $reason->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                <div class="lg:col-span-2" id="custom_reason_field" style="display: none;">
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Custom Reason (Please specify)</label>
+                    <textarea name="open_ended_reason" rows="4" placeholder="Enter your custom reason here..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">{{ old('open_ended_reason') }}</textarea>
+                </div>
                 <div class="lg:col-span-2">
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Attachment</label>
-                    <input type="file" name="attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Attachment URL</label>
+                    <input type="url" name="attachment_url" value="{{ old('attachment_url') }}" placeholder="https://example.com/document.pdf" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                    <p class="mt-2 text-xs text-slate-500">Provide a URL link to the document or file</p>
                 </div>
             </div>
 
@@ -92,4 +97,20 @@
             </div>
         </form>
     </div>
+
+    <script>
+        const reasonSelect = document.getElementById('reason_select');
+        const customReasonField = document.getElementById('custom_reason_field');
+
+        function toggleCustomReason() {
+            if (reasonSelect.value === '') {
+                customReasonField.style.display = 'block';
+            } else {
+                customReasonField.style.display = 'none';
+            }
+        }
+
+        reasonSelect.addEventListener('change', toggleCustomReason);
+        toggleCustomReason();
+    </script>
 @endsection

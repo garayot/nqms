@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Enums\DocumentStatus;
-use App\Models\Concerns\HasEncryptedRouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FormTemplate extends Model
+class NqmsManual extends Model
 {
-    use HasEncryptedRouteKey;
-
     protected $fillable = [
         'document_type_id',
         'document_reference_code',
@@ -21,7 +18,7 @@ class FormTemplate extends Model
         'effectivity_date',
         'document_location',
         'status',
-        'downloadable_attachment_path',
+        'downloadable_attachment_url',
     ];
 
     protected $casts = [

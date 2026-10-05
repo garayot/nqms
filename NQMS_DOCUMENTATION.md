@@ -125,6 +125,16 @@ The National Quality Management System (NQMS) is an integrated, web-based platfo
 - **Administrative Staff**: Manage templates, forms, and organizational data
 - **System Administrators**: Oversee system configuration and user management
 
+### October 2026 Updates (Implemented)
+
+- **Protected File Access on Public Pages**: Public repository pages remain visible, but viewing/downloading controlled files now requires login. Guests are redirected/prompted to authenticate before access.
+- **Status Filter Behavior Fixed**: Selecting **All** in Forms & Templates and NQMS Manual now returns all records, including obsolete items.
+- **Forms/Templates Print View Enhanced**: Print preview now uses A4 landscape layout with continuation pages, repeating table headers on succeeding pages, and official header/footer logo images.
+- **Person Responsible Standardized**: In Forms & Templates, **Person Responsible** is now the uploader/owner of the record.
+- **Form Template Ownership Added**: Form templates now store owner/uploader via a `created_by` field.
+- **CSV Import/Export Updated**: CSV template and import flow now include `originating_office` and `person_responsible` fields; ownership is still derived from the logged-in uploader (`created_by`).
+- **DRAF Import Mapping Corrected**: Imported originating office now prioritizes **functional division** name (instead of office) when creating form template entries.
+
 ---
 
 ## Problems Solved
@@ -260,7 +270,7 @@ The National Quality Management System (NQMS) is an integrated, web-based platfo
 #### Permissions:
 - Create, edit, view own drafs (until submitted)
 - View all approved documents
-- Access public forms and templates
+- Browse public forms and templates index (login required when opening/downloading protected files)
 - View dashboard with own draf statistics
 
 #### Typical Workflow:
@@ -439,7 +449,8 @@ Central repository for all organizational documents with version control and sta
   - **Draft**: Under development (not yet approved)
 
 - **Document Access**
-  - Public access to approved documents
+  - Public listing access for approved documents/forms/processes
+  - Authentication required for viewing/downloading protected files
   - Secure download capabilities
   - Print functionality
   - Offline availability
@@ -701,7 +712,7 @@ Document and communicate how organizational processes work.
 - Administrators create and maintain structure
 - Optional external URLs for detailed procedures
 - Search across all processes
-- Public access to approved processes
+- Public access to approved process listings (protected files still require login)
 
 ---
 
@@ -747,19 +758,22 @@ Centralize and standardize forms used across the organization.
 - Version control for forms
 - Import templates from CSV
 - Export form catalogs
+- Track uploader ownership (`created_by`)
+- Capture originating office using functional division mapping for DRAF-based imports
 
 **Form Catalog:**
 - Browse all available forms
 - Search by form name, type, or code
-- Download forms for use
-- Print forms directly
+- View/download through protected access routes (guests are prompted to log in)
+- Print forms using A4 landscape print preview with continuation pages and repeated headers
 - View form details and instructions
 
 **Form Administration:**
 - Import CSV templates
 - Bulk form management
 - Template versioning
-- Access control (public/restricted)
+- Access control with authentication gate for file viewing/downloading
+- Person Responsible display based on uploader/owner
 
 **Use Cases:**
 - New employee accessing required forms
@@ -1357,8 +1371,8 @@ OUTCOME: Improved document quality through iterative feedback
 
 ### Page 9: Documents Repository
 
-**Purpose**: Access approved documents
-**Accessible By**: All authenticated users
+**Purpose**: Browse approved documents and securely access files
+**Accessible By**: Public for listing; authenticated users for protected file view/download
 **Route**: `/documents` or `/documents/index`
 
 **Header Section:**
@@ -1368,7 +1382,7 @@ OUTCOME: Improved document quality through iterative feedback
 **Search & Filter Section:**
 - **Search Box**: Search by title, code, keywords
 - **Document Type Filter**: Dropdown with types
-- **Status Filter**: Active/Obsolete
+- **Status Filter**: All/Active/Obsolete (All returns complete dataset)
 - **Originating Office Filter**: By office location
 - **Apply Filters Button**
 
@@ -1425,8 +1439,8 @@ OUTCOME: Improved document quality through iterative feedback
 
 ### Page 10: Forms & Templates Catalog
 
-**Purpose**: Access and download forms
-**Accessible By**: All authenticated users
+**Purpose**: Browse forms/templates and securely access files
+**Accessible By**: Public for listing; authenticated users for protected file view/download
 **Route**: `/forms-templates` or `/documents?type=form`
 
 **Organization:**
@@ -1439,9 +1453,11 @@ OUTCOME: Improved document quality through iterative feedback
   - Form name/title
   - Document type category
   - Brief description
+  - Originating office
+  - Person Responsible (uploader/owner)
   - Associated document type
-  - Download button (PDF or Word)
-  - Print button
+  - View/Download button (requires login if guest)
+  - Print button (A4 landscape print-preview format)
   - Last updated date
   - Version number
 
@@ -1729,12 +1745,18 @@ OUTCOME: Improved document quality through iterative feedback
 
 **CSV Import Template:**
 - Download template
-- Columns: Form Name, Description, Type, File, Version
+- Columns: `document_reference_code`, `doc_title`, `originating_office`, `person_responsible`, `document_type`, `revision_number`, `effectivity_date`, `document_location`, `status`
 - Batch upload multiple forms
+
+**Ownership Rule:**
+- `person_responsible` in CSV is accepted as reference data for catalog fields.
+- Record ownership/uploader is set from the currently logged-in admin via `created_by`.
 
 **Form List Table:**
 - Form Name
 - Document Type (associated)
+- Originating Office
+- Person Responsible (uploader)
 - File Name/Link
 - Version
 - Upload Date
@@ -2330,6 +2352,15 @@ Administrators can generate:
 **Issue: Search not finding documents**
 - Solution: Check wildcard usage, search in title not content, check document status (active vs. obsolete)
 
+**Issue: Document file cannot be opened/downloaded from public page**
+- Solution: Login first. Public listings are visible to guests, but protected file links require authentication.
+
+**Issue: "All" status does not include obsolete records**
+- Solution: Use the **All** option in Forms/Templates and NQMS Manual filters. This now returns both active and obsolete entries.
+
+**Issue: Forms print preview layout is misaligned**
+- Solution: Use the built-in print preview page and print in A4 Landscape with backgrounds enabled for correct header/footer rendering.
+
 ---
 
 ## Conclusion
@@ -2349,7 +2380,7 @@ By following the guidelines and best practices outlined in this documentation, o
 ## Document Information
 
 **Document**: NQMS System Documentation
-**Version**: 1.0
+**Version**: 1.1
 **Date**: October 2026
 **Audience**: All NQMS Users
 **Classification**: Internal Use

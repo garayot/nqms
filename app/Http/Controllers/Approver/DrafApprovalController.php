@@ -70,22 +70,20 @@ class DrafApprovalController extends Controller
         if ($validated['approval'] === ApprovalDecision::APPROVED->value) {
             $draf->status = DrafStatus::APPROVED->value;
 
-            if ($request->hasFile('approved_attachment')) {
-                $path = $request->file('approved_attachment')->store('documents/final', 'public');
-                $draf->approved_attachment_path = $path;
+            if (filled($validated['approved_attachment_url'] ?? null)) {
+                $draf->approved_attachment_url = $validated['approved_attachment_url'];
                 $draf->date_registered = $validated['date_registered'] ?? now()->toDateString();
                 $draf->status = DrafStatus::REGISTERED->value;
                 $document = $draf->document ?? new Document;
                 $document->draf_id = $draf->id;
                 $document->originating_office_id = $draf->requestedBy?->id;
                 $document->status = DocumentStatus::ACTIVE->value;
-                $document->downloadable_doc_path = $path;
+                $document->downloadable_doc_path = $validated['approved_attachment_url'];
                 $document->location = 'Repository';
                 $document->save();
             }
         } else {
             $draf->status = DrafStatus::APPROVAL_DISAPPROVED->value;
-            $draf->approved_attachment_path = $draf->approved_attachment_path;
         }
 
         $draf->save();

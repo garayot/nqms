@@ -18,12 +18,12 @@
 
         <div class="mt-6 space-y-4" id="planning-docs-container">
             @forelse ($functionalDivs as $functionalDiv)
-                <section class="planning-division overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-search="{{ strtolower($functionalDiv->name.' '.$functionalDiv->url) }}" data-expanded="false">
+                <section class="planning-division overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-search="{{ strtolower($functionalDiv->name) }}" data-expanded="false">
                     <h2>
                         <button type="button" class="planning-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-4 text-left text-lg font-semibold text-[#0f3d68] transition-colors hover:bg-blue-100" aria-expanded="false" aria-controls="planning-division-panel-{{ $functionalDiv->id }}" id="planning-division-trigger-{{ $functionalDiv->id }}">
                             <span>{{ $functionalDiv->name }}</span>
                             <svg data-accordion-icon class="planning-icon h-5 w-5 shrink-0 text-[#0f3d68] transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 9 7 7 7-7" />
                             </svg>
                         </button>
                     </h2>
@@ -32,17 +32,29 @@
                         <div class="space-y-3 overflow-hidden p-4">
                             @if ($functionalDiv->url)
                                 <div>
-                                    <a href="{{ $functionalDiv->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-200">Open Division Folder</a>
+                                    <a href="{{ route('public.file-access.planning-divisions', $functionalDiv) }}" class="inline-flex rounded-md bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-200">
+                                        @auth
+                                            Open Division Folder
+                                        @else
+                                            Login to Open Division Folder
+                                        @endauth
+                                    </a>
                                 </div>
                             @endif
 
                             <div class="space-y-2">
                                 @forelse ($functionalDiv->planningDocs as $planningDoc)
-                                    <div class="planning-document overflow-hidden rounded-lg border border-slate-200" data-search="{{ strtolower($planningDoc->name.' '.$planningDoc->url) }}">
+                                    <div class="planning-document overflow-hidden rounded-lg border border-slate-200" data-search="{{ strtolower($planningDoc->name) }}">
                                         <div class="flex flex-col gap-3 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                                             <div class="text-sm font-medium text-slate-800">{{ $planningDoc->name }}</div>
                                             <div>
-                                                <a href="{{ $planningDoc->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open</a>
+                                                <a href="{{ route('public.file-access.planning-docs', $planningDoc) }}" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">
+                                                    @auth
+                                                        Open
+                                                    @else
+                                                        Login to Open
+                                                    @endauth
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

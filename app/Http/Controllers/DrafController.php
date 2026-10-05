@@ -11,7 +11,6 @@ use App\Models\DrafHistory;
 use App\Models\Reason;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class DrafController extends Controller
 {
@@ -37,8 +36,18 @@ class DrafController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('attachment')) {
-            $validated['attachment_path'] = $request->file('attachment')->store('drafs/attachments', 'public');
+        // Handle attachment URL instead of file
+        if ($request->filled('attachment_url')) {
+            $validated['attachment_url'] = $request->input('attachment_url');
+        }
+
+        // Handle open-ended reason if no predefined reason selected
+        if (! $request->filled('reason_id') && $request->filled('open_ended_reason')) {
+            $validated['open_ended_reason'] = $request->input('open_ended_reason');
+            $validated['reason'] = $request->input('open_ended_reason');
+        } else {
+            $validated['open_ended_reason'] = null;
+            $validated['reason'] = null;
         }
 
         $validated['requested_by'] = Auth::id();
@@ -86,11 +95,18 @@ class DrafController extends Controller
 
         $validated = $request->validated();
 
-        if ($request->hasFile('attachment')) {
-            if ($draf->attachment_path) {
-                Storage::disk('public')->delete($draf->attachment_path);
-            }
-            $validated['attachment_path'] = $request->file('attachment')->store('drafs/attachments', 'public');
+        // Handle attachment URL instead of file
+        if ($request->filled('attachment_url')) {
+            $validated['attachment_url'] = $request->input('attachment_url');
+        }
+
+        // Handle open-ended reason if no predefined reason selected
+        if (! $request->filled('reason_id') && $request->filled('open_ended_reason')) {
+            $validated['open_ended_reason'] = $request->input('open_ended_reason');
+            $validated['reason'] = $request->input('open_ended_reason');
+        } else {
+            $validated['open_ended_reason'] = null;
+            $validated['reason'] = null;
         }
 
         $oldStatus = $draf->status?->value ?? DrafStatus::DRAFT->value;

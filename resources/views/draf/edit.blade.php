@@ -7,13 +7,13 @@
             <p class="mt-2 text-sm text-slate-600">Update Section 1 values before the document is re-submitted.</p>
         </div>
 
-        <form method="POST" action="{{ route('draf.update', $draf) }}" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="{{ route('draf.update', $draf) }}" class="space-y-6">
             @csrf
             @method('PUT')
 
             <div class="grid gap-6 lg:grid-cols-2">
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">DRAF Number</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">DRAF Number <span class="text-slate-400">(Optional)</span></label>
                     <input name="draf_number" value="{{ old('draf_number', $draf->draf_number) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
@@ -53,7 +53,7 @@
                     <input name="title" value="{{ old('title', $draf->title) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Reference Code</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Reference Code <span class="text-slate-400">(Optional)</span></label>
                     <input name="reference_code" value="{{ old('reference_code', $draf->reference_code) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
                 </div>
                 <div>
@@ -62,7 +62,7 @@
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Requested By</label>
-                    <input name="requested_by" value="{{ old('requested_by', $draf->requested_by) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                    <input type="text" value="{{ $draf->requestedBy?->name }}" disabled class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Date Requested</label>
@@ -70,18 +70,25 @@
                 </div>
                 <div class="lg:col-span-2">
                     <label class="mb-2 block text-sm font-medium text-slate-700">Reason</label>
-                    <select name="reason_id" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
-                        <option value="">Select</option>
+                    <select name="reason_id" id="reason_select" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                        <option value="">Select a predefined reason or enter custom reason below</option>
                         @foreach ($reasons as $reason)
                             <option value="{{ $reason->id }}" {{ (string) old('reason_id', $draf->reason_id) === (string) $reason->id ? 'selected' : '' }}>{{ $reason->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                <div class="lg:col-span-2" id="custom_reason_field" style="display: none;">
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Custom Reason (Please specify)</label>
+                    <textarea name="open_ended_reason" rows="4" placeholder="Enter your custom reason here..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">{{ old('open_ended_reason', $draf->open_ended_reason) }}</textarea>
+                </div>
                 <div class="lg:col-span-2">
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Attachment</label>
-                    <input type="file" name="attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
-                    @if ($draf->attachment_path)
-                        <div class="mt-2 text-xs text-slate-500">Current file: {{ basename($draf->attachment_path) }}</div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Attachment URL</label>
+                    <input type="url" name="attachment_url" value="{{ old('attachment_url', $draf->attachment_url) }}" placeholder="https://example.com/document.pdf" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                    <p class="mt-2 text-xs text-slate-500">Provide a URL link to the document or file</p>
+                    @if ($draf->attachment_url)
+                        <div class="mt-2">
+                            <a href="{{ $draf->attachment_url }}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800">Current URL</a>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -92,4 +99,20 @@
             </div>
         </form>
     </div>
+
+    <script>
+        const reasonSelect = document.getElementById('reason_select');
+        const customReasonField = document.getElementById('custom_reason_field');
+
+        function toggleCustomReason() {
+            if (reasonSelect.value === '') {
+                customReasonField.style.display = 'block';
+            } else {
+                customReasonField.style.display = 'none';
+            }
+        }
+
+        reasonSelect.addEventListener('change', toggleCustomReason);
+        toggleCustomReason();
+    </script>
 @endsection
