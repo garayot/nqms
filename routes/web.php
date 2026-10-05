@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DrafManagementController;
 use App\Http\Controllers\Admin\FormTemplateController;
 use App\Http\Controllers\Admin\FuncDivController;
 use App\Http\Controllers\Admin\FunctionalDivController;
+use App\Http\Controllers\Admin\NqmsManualController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\PositionController;
@@ -33,6 +34,7 @@ Route::get('/organization/{team}', [TeamController::class, 'show'])->name('organ
 Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
+Route::get('/nqms-manuals', [DocumentController::class, 'publicNqmsManualIndex'])->name('nqms-manuals.index');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
@@ -90,6 +92,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/form-templates', [FormTemplateController::class, 'store'])->name('form-templates.store');
     Route::post('/form-templates/import-csv', [FormTemplateController::class, 'importCsv'])->name('form-templates.import-csv');
     Route::post('/form-templates/import/{document}', [FormTemplateController::class, 'importFromDocument'])->name('form-templates.import');
+
+    Route::get('/nqms-manuals', [NqmsManualController::class, 'index'])->name('nqms-manuals.index');
+    Route::post('/nqms-manuals', [NqmsManualController::class, 'store'])->name('nqms-manuals.store');
+    Route::get('/nqms-manuals/{nqmsManual}/edit', [NqmsManualController::class, 'edit'])->name('nqms-manuals.edit');
+    Route::put('/nqms-manuals/{nqmsManual}', [NqmsManualController::class, 'update'])->name('nqms-manuals.update');
+    Route::delete('/nqms-manuals/{nqmsManual}', [NqmsManualController::class, 'destroy'])->name('nqms-manuals.destroy');
 
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.role');

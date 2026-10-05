@@ -27,7 +27,7 @@
                     </li>
                 </ul>
             </div>
-            <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">NQMS Manual</a>
+            <a href="{{ route('nqms-manuals.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">NQMS Manual</a>
             <a href="{{ route('planning-docs') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Planning Docs</a>
             <a href="{{ route('operations-manual') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Operations Manual</a>
             <a href="{{ route('forms.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Forms and Templates</a>
@@ -54,7 +54,7 @@
                         <a href="{{ route('home') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Home</a>
                         <a href="{{ route('organization') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QMS Org Chart</a>
                         <a href="{{ route('qps') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QPS</a>
-                        <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">NQMS Manual</a>
+                        <a href="{{ route('nqms-manuals.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">NQMS Manual</a>
                         <a href="{{ route('planning-docs') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Planning Docs</a>
                         <a href="{{ route('operations-manual') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Operations Manual</a>
                         <a href="{{ route('forms.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Forms and Templates</a>
