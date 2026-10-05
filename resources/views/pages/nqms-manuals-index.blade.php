@@ -116,8 +116,13 @@
                             <td class="px-4 py-3">
                                 <div class="flex justify-end">
                                     @if ($document->downloadable_attachment_url)
-                                        <a href="{{ $document->downloadable_attachment_url }}" target="_blank" aria-label="Download" class="inline-flex rounded-md bg-[#0f3d68] p-2 text-white">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                                        <a href="{{ route('public.file-access.nqms-manuals', $document) }}" class="inline-flex items-center gap-2 rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">
+                                            @auth
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                                                <span>Download</span>
+                                            @else
+                                                <span>Login to download</span>
+                                            @endauth
                                         </a>
                                     @else
                                         <span class="text-xs text-slate-500">No file</span>

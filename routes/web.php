@@ -24,6 +24,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DrafController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PublicFileAccessController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -35,6 +36,12 @@ Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->n
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
 Route::get('/nqms-manuals', [DocumentController::class, 'publicNqmsManualIndex'])->name('nqms-manuals.index');
+Route::get('/access/forms-templates/{formTemplate}', [PublicFileAccessController::class, 'formTemplate'])->name('public.file-access.form-templates');
+Route::get('/access/nqms-manuals/{nqmsManual}', [PublicFileAccessController::class, 'nqmsManual'])->name('public.file-access.nqms-manuals');
+Route::get('/access/planning-divisions/{functionalDiv}', [PublicFileAccessController::class, 'planningDivision'])->name('public.file-access.planning-divisions');
+Route::get('/access/planning-docs/{planningDoc}', [PublicFileAccessController::class, 'planningDoc'])->name('public.file-access.planning-docs');
+Route::get('/access/process-groups/{processGroup}', [PublicFileAccessController::class, 'processGroup'])->name('public.file-access.process-groups');
+Route::get('/access/sub-processes/{subProcess}', [PublicFileAccessController::class, 'subProcess'])->name('public.file-access.sub-processes');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');

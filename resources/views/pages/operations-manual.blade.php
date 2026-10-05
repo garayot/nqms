@@ -25,14 +25,20 @@
 
                             <div class="flex items-center gap-2">
                                 @if ($processGroup->url)
-                                    <a href="{{ $processGroup->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open Process Group Link</a>
+                                    <a href="{{ route('public.file-access.process-groups', $processGroup) }}" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">
+                                        @auth
+                                            Open Process Group Link
+                                        @else
+                                            Login to Open Link
+                                        @endauth
+                                    </a>
                                 @else
                                     <span class="inline-flex rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600">No Link</span>
                                 @endif
                             </div>
 
                             <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-[#0f3d68] transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 9 7 7 7-7" />
                             </svg>
                         </button>
                     </h2>
@@ -46,7 +52,7 @@
                                     <button type="button" class="operations-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-base font-semibold text-slate-800 transition-colors hover:bg-slate-100" aria-expanded="false" aria-controls="operations-process-panel-{{ $process->id }}" id="operations-process-trigger-{{ $process->id }}">
                                         <span>Process: {{ $process->process_name }}</span>
                                         <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-slate-600 transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 9 7 7 7-7" />
                                         </svg>
                                     </button>
                                 </h3>
@@ -54,12 +60,18 @@
                                 <div id="operations-process-panel-{{ $process->id }}" role="region" aria-labelledby="operations-process-trigger-{{ $process->id }}" class="operations-panel grid grid-rows-[0fr] overflow-hidden transition-all duration-300 ease-in-out opacity-0">
                                     <div class="overflow-hidden p-3">
                                     @forelse ($process->subProcesses as $subProcess)
-                                        <div class="operations-subprocess overflow-hidden rounded-lg border border-slate-200" data-search="{{ strtolower($subProcess->sub_process_name.' '.$subProcess->url) }}">
+                                        <div class="operations-subprocess overflow-hidden rounded-lg border border-slate-200" data-search="{{ strtolower($subProcess->sub_process_name) }}">
                                             <div class="flex flex-col gap-3 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                                                 <div class="text-sm font-medium text-slate-800">Sub-Process: {{ $subProcess->sub_process_name }}</div>
                                                 <div>
                                                     @if ($subProcess->url)
-                                                        <a href="{{ $subProcess->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">Open QCP</a>
+                                                        <a href="{{ route('public.file-access.sub-processes', $subProcess) }}" class="inline-flex rounded-md bg-[#0f3d68] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b2f52]">
+                                                            @auth
+                                                                Open QCP
+                                                            @else
+                                                                Login to Open QCP
+                                                            @endauth
+                                                        </a>
                                                     @else
                                                         <span class="inline-flex rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600">No QCP Link</span>
                                                     @endif

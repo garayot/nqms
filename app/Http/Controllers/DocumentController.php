@@ -17,7 +17,9 @@ class DocumentController extends Controller
     {
         $documents = FormTemplate::query()
             ->with('documentType')
-            ->where('status', $request->status ?: DocumentStatus::ACTIVE->value)
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->string('status')->value());
+            })
             ->when($request->document_type_id, function ($query, $documentTypeId) {
                 $query->where('document_type_id', $documentTypeId);
             })
@@ -55,7 +57,9 @@ class DocumentController extends Controller
     {
         $documents = FormTemplate::query()
             ->with('documentType')
-            ->where('status', $request->status ?: DocumentStatus::ACTIVE->value)
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->string('status')->value());
+            })
             ->when($request->document_type_id, function ($query, $documentTypeId) {
                 $query->where('document_type_id', $documentTypeId);
             })
@@ -103,7 +107,9 @@ class DocumentController extends Controller
     {
         $documents = NqmsManual::query()
             ->with(['documentType', 'uploader'])
-            ->where('status', $request->status ?: DocumentStatus::ACTIVE->value)
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->string('status')->value());
+            })
             ->when($request->document_type_id, function ($query, $documentTypeId) {
                 $query->where('document_type_id', $documentTypeId);
             })

@@ -19,7 +19,7 @@
                         <button type="button" class="operations-toggle flex w-full items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-4 text-left text-lg font-semibold text-[#0f3d68] transition-colors hover:bg-blue-100" aria-expanded="false" aria-controls="operations-group-panel-{{ $processGroup->id }}" id="operations-group-trigger-{{ $processGroup->id }}">
                             <span>{{ $processGroup->process_group_name }}</span>
                             <svg data-accordion-icon class="operations-icon h-5 w-5 shrink-0 text-[#0f3d68] transition-transform duration-200 ease-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 9 7 7 7-7" />
                             </svg>
                         </button>
                     </h2>
