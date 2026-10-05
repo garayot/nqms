@@ -77,17 +77,12 @@ class FormTemplateController extends Controller
             'effectivity_date' => ['nullable', 'date'],
             'document_location' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'in:active,obsolete'],
-            'downloadable_attachment' => ['nullable', 'file', 'max:20480', 'required_without:downloadable_attachment_url'],
-            'downloadable_attachment_url' => ['nullable', 'url', 'max:2048', 'required_without:downloadable_attachment'],
+            'downloadable_attachment_url' => ['nullable', 'url', 'max:2048'],
         ]);
 
-        $attachmentPath = null;
-
-        if ($request->hasFile('downloadable_attachment')) {
-            $attachmentPath = $request->file('downloadable_attachment')->storePublicly('form-templates', 'public');
-        } elseif (filled($validated['downloadable_attachment_url'] ?? null)) {
-            $attachmentPath = $validated['downloadable_attachment_url'];
-        }
+        $attachmentPath = filled($validated['downloadable_attachment_url'] ?? null)
+            ? $validated['downloadable_attachment_url']
+            : null;
 
         FormTemplate::create([
             'document_type_id' => $validated['document_type_id'],
@@ -110,7 +105,7 @@ class FormTemplateController extends Controller
             'document_type',
             'document_reference_code',
             'doc_title',
-            'originating_office',
+            'responsible',
             'revision_number',
             'effectivity_date',
             'document_location',
@@ -291,7 +286,7 @@ class FormTemplateController extends Controller
             return back()->with('error', 'The selected registered document does not have a reference code.');
         }
 
-        $attachmentPath = $document->downloadable_doc_path ?: $document->draf?->approved_attachment_path;
+        $attachmentPath = $document->downloadable_doc_path ?: $document->draf?->approved_attachment_url;
         $responsible = $document->originatingOffice?->office
             ?? $document->draf?->requestedBy?->office
             ?? $document->draf?->requestedBy?->name

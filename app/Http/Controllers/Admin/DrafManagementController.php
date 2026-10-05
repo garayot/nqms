@@ -10,6 +10,7 @@ use App\Models\DrafHistory;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DrafManagementController extends Controller
 {
@@ -57,6 +58,27 @@ class DrafManagementController extends Controller
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('draf-form-'.$draf->draf_number.'.pdf');
+    }
+
+    public function edit(Draf $draf)
+    {
+        $draf->load(['documentType', 'requestedBy']);
+
+        return view('admin.drafs.edit', compact('draf'));
+    }
+
+    public function update(Request $request, Draf $draf)
+    {
+        $validated = $request->validate([
+            'draf_number' => ['nullable', 'string', 'max:255', Rule::unique('drafs', 'draf_number')->ignore($draf->id)],
+            'reference_code' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $draf->draf_number = $validated['draf_number'] ?? null;
+        $draf->reference_code = $validated['reference_code'] ?? null;
+        $draf->save();
+
+        return redirect()->route('admin.form-templates.index')->with('success', 'DRAF details updated successfully.');
     }
 
     public function review(ReviewDrafRequest $request, Draf $draf)

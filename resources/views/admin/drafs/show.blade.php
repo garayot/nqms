@@ -23,18 +23,18 @@
                     <div class="flex justify-between"><dt>Source</dt><dd>{{ $draf->source?->label() ?? $draf->source }}</dd></div>
                     <div class="flex justify-between"><dt>Document Type</dt><dd>{{ $draf->documentType?->name }}</dd></div>
                     <div class="flex justify-between"><dt>Requested By</dt><dd>{{ $draf->requestedBy?->name }}</dd></div>
-                    <div class="flex justify-between"><dt>Reason</dt><dd>{{ $draf->reasonOption?->name ?? $draf->reason }}</dd></div>
+                    <div class="flex justify-between"><dt>Reason</dt><dd>{{ $draf->reasonOption?->name ?? $draf->open_ended_reason ?? $draf->reason }}</dd></div>
                     <div class="flex justify-between"><dt>Reference Code</dt><dd>{{ $draf->reference_code ?? 'N/A' }}</dd></div>
                     <div class="flex justify-between"><dt>Current Revision</dt><dd>{{ $draf->current_revision_no }}</dd></div>
                 </dl>
 
                 <div class="mt-5 flex flex-wrap gap-3">
-                    @if ($draf->attachment_path)
-                        <a href="{{ Storage::url($draf->attachment_path) }}" target="_blank" class="inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">View Submitted Attachment</a>
+                    @if ($draf->attachment_url)
+                        <a href="{{ $draf->attachment_url }}" target="_blank" class="inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">View Submitted Attachment</a>
                     @endif
 
-                    @if ($draf->approved_attachment_path)
-                        <a href="{{ Storage::url($draf->approved_attachment_path) }}" target="_blank" class="inline-flex rounded-md bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">View Approved Attachment</a>
+                    @if ($draf->approved_attachment_url)
+                        <a href="{{ $draf->approved_attachment_url }}" target="_blank" class="inline-flex rounded-md bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">View Approved Attachment</a>
                     @endif
                 </div>
             </div>

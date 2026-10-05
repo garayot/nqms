@@ -10,7 +10,6 @@ use App\Enums\UserRole;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Draf;
-use App\Models\FormTemplate;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -71,8 +70,6 @@ class FormTemplateRepositoryTest extends TestCase
 
     public function test_admin_can_create_a_form_template_and_public_repository_shows_it(): void
     {
-        Storage::fake('public');
-
         /** @var User $admin */
         $admin = User::factory()->create([
             'role' => UserRole::ADMIN,
@@ -93,14 +90,15 @@ class FormTemplateRepositoryTest extends TestCase
             'effectivity_date' => '2026-09-25',
             'document_location' => 'Records Room',
             'status' => DocumentStatus::ACTIVE->value,
-            'downloadable_attachment' => UploadedFile::fake()->create('template.pdf', 100, 'application/pdf'),
+            'downloadable_attachment_url' => 'https://example.com/template.pdf',
         ]);
 
         $response->assertRedirect();
 
-        $template = FormTemplate::query()->firstOrFail();
-
-        $this->assertTrue(Storage::disk('public')->exists($template->downloadable_attachment_path));
+        $this->assertDatabaseHas('form_templates', [
+            'document_reference_code' => 'FT-001',
+            'downloadable_attachment_path' => 'https://example.com/template.pdf',
+        ]);
 
         $this->get(route('forms.index'))
             ->assertOk()
@@ -144,7 +142,7 @@ class FormTemplateRepositoryTest extends TestCase
             'new_revision_number' => '03',
             'effectivity_date' => '2026-09-09',
             'date_registered' => '2026-09-09',
-            'approved_attachment_path' => 'documents/final/sample.pdf',
+            'approved_attachment_url' => 'https://example.com/sample.pdf',
         ]);
 
         $document = Document::create([
@@ -214,7 +212,7 @@ class FormTemplateRepositoryTest extends TestCase
             'new_revision_number' => '01',
             'effectivity_date' => '2026-09-25',
             'date_registered' => '2026-09-25',
-            'approved_attachment_path' => 'documents/final/imported.pdf',
+            'approved_attachment_url' => 'https://example.com/imported.pdf',
         ]);
 
         Document::create([

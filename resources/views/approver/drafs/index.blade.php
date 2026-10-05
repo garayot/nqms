@@ -14,6 +14,7 @@
                         <th class="px-4 py-3 font-semibold text-slate-700">DRAF</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Requested By</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Status</th>
+                        <th class="px-4 py-3 font-semibold text-slate-700">View Approved DRAF</th>
                         <th class="px-4 py-3 font-semibold text-slate-700">Action</th>
                     </tr>
                 </thead>
@@ -24,12 +25,19 @@
                             <td class="px-4 py-3">{{ $draf->requestedBy?->name }}</td>
                             <td class="px-4 py-3"><x-status-badge :status="$draf->status?->value ?? 'draft'" /></td>
                             <td class="px-4 py-3">
+                                @if ($draf->approved_attachment_url)
+                                    <a href="{{ $draf->approved_attachment_url }}" target="_blank" class="rounded-md border border-emerald-300 px-3 py-2 text-xs font-semibold text-emerald-700">View Approved DRAF</a>
+                                @else
+                                    <span class="text-xs text-slate-500">Not available</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
                                 <a href="{{ route('approver.drafs.show', $draf) }}" class="rounded-md bg-[#0f3d68] px-3 py-2 text-xs font-semibold text-white">View Details</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-4 py-8 text-center text-slate-500">No DRAFs are awaiting approval.</td>
+                            <td colspan="5" class="px-4 py-8 text-center text-slate-500">No DRAFs are awaiting approval.</td>
                         </tr>
                     @endforelse
                 </tbody>

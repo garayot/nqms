@@ -10,7 +10,7 @@ class ApproveDrafRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->isApprover();
+        return $this->user()?->isApprover() ?? false;
     }
 
     public function rules(): array
@@ -23,7 +23,7 @@ class ApproveDrafRequest extends FormRequest
             'new_revision_number' => ['nullable', 'string', 'max:50'],
             'effectivity_date' => ['nullable', 'date'],
             'date_registered' => ['nullable', 'date'],
-            'approved_attachment' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:2048'],
+            'approved_attachment_url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 
@@ -43,7 +43,7 @@ class ApproveDrafRequest extends FormRequest
 
         $validator->sometimes('date_registered', 'required|date', function ($input) {
             return ($input->approval ?? null) === ApprovalDecision::APPROVED->value
-                && ! empty($input->approved_attachment);
+                && ! empty($input->approved_attachment_url);
         });
     }
 }

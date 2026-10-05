@@ -60,6 +60,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/drafs', [DrafManagementController::class, 'index'])->name('drafs.index');
     Route::get('/drafs/{draf}', [DrafManagementController::class, 'show'])->name('drafs.show');
     Route::get('/drafs/{draf}/print', [DrafManagementController::class, 'print'])->name('drafs.print');
+    Route::get('/drafs/{draf}/edit', [DrafManagementController::class, 'edit'])->name('drafs.edit');
+    Route::put('/drafs/{draf}', [DrafManagementController::class, 'update'])->name('drafs.update');
     Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
 
     Route::resource('positions', PositionController::class)->except(['show']);

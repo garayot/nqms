@@ -34,16 +34,16 @@
 
                     <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
                         <div class="text-sm font-semibold text-slate-800">Reason</div>
-                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ $draf->reasonOption?->name ?? $draf->reason }}</p>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ $draf->reasonOption?->name ?? $draf->open_ended_reason ?? $draf->reason }}</p>
                     </div>
 
                     <div class="mt-5 flex flex-wrap gap-3">
-                        @if ($draf->attachment_path)
-                            <a href="{{ Storage::url($draf->attachment_path) }}" target="_blank" class="inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">View Submitted Attachment</a>
+                        @if ($draf->attachment_url)
+                            <a href="{{ $draf->attachment_url }}" target="_blank" class="inline-flex rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">View Submitted Attachment</a>
                         @endif
 
-                        @if ($draf->approved_attachment_path)
-                            <a href="{{ Storage::url($draf->approved_attachment_path) }}" target="_blank" class="inline-flex rounded-md bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">View Current Approved File</a>
+                        @if ($draf->approved_attachment_url)
+                            <a href="{{ $draf->approved_attachment_url }}" target="_blank" class="inline-flex rounded-md bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">View Approved DRAF</a>
                         @endif
                     </div>
                 </div>
@@ -62,7 +62,7 @@
             <div class="space-y-6">
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h2 class="text-xl font-semibold text-slate-900">Approval Decision</h2>
-                    <form method="POST" action="{{ route('approver.drafs.approve', $draf) }}" enctype="multipart/form-data" class="mt-4 space-y-4">
+                    <form method="POST" action="{{ route('approver.drafs.approve', $draf) }}" class="mt-4 space-y-4">
                         @csrf
                         <div>
                             <label class="mb-2 block text-sm font-medium text-slate-700">Approval</label>
@@ -91,8 +91,8 @@
                                 <input type="date" name="date_registered" value="{{ old('date_registered', optional($draf->date_registered)->format('Y-m-d')) }}" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
                             </div>
                             <div>
-                                <label class="mb-2 block text-sm font-medium text-slate-700">Approved Attachment</label>
-                                <input type="file" name="approved_attachment" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                                <label class="mb-2 block text-sm font-medium text-slate-700">Approved DRAF URL</label>
+                                <input type="url" name="approved_attachment_url" value="{{ old('approved_attachment_url', $draf->approved_attachment_url) }}" placeholder="https://example.com/approved-draf.pdf" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
                             </div>
                         </div>
 
