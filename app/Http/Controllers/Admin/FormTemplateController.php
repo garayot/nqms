@@ -109,7 +109,8 @@ class FormTemplateController extends Controller
             'document_type',
             'document_reference_code',
             'doc_title',
-            'responsible',
+            'originating_office',
+            'person_responsible',
             'revision_number',
             'effectivity_date',
             'document_location',
@@ -121,7 +122,8 @@ class FormTemplateController extends Controller
             'Form/Template',
             'SDO-OSDS-F001',
             'Sample Form Title',
-            'Planning Division',
+            'CID',
+            'John Doe',
             '01',
             '2026-09-25',
             'Main Office',
@@ -193,9 +195,9 @@ class FormTemplateController extends Controller
 
             $referenceCode = trim((string) ($rowData['document_reference_code'] ?? $rowData['reference_code'] ?? ''));
             $docTitle = trim((string) ($rowData['doc_title'] ?? $rowData['title'] ?? ''));
-            $responsible = trim((string) ($rowData['originating_office'] ?? $rowData['responsible'] ?? ''));
+            $originatingOffice = trim((string) ($rowData['originating_office'] ?? $rowData['responsible'] ?? ''));
 
-            if ($referenceCode === '' || $docTitle === '' || $responsible === '') {
+            if ($referenceCode === '' || $docTitle === '' || $originatingOffice === '') {
                 $skipped++;
 
                 continue;
@@ -258,16 +260,13 @@ class FormTemplateController extends Controller
 
             $template->document_type_id = $documentTypeId;
             $template->doc_title = $docTitle;
-            $template->responsible = $responsible;
+            $template->responsible = $originatingOffice;
             $template->revision_number = trim((string) ($rowData['revision_number'] ?? '')) ?: null;
             $template->effectivity_date = $effectivityDate;
             $template->document_location = trim((string) ($rowData['document_location'] ?? '')) ?: null;
             $template->status = $status;
             $template->downloadable_attachment_path = $attachment !== '' ? $attachment : null;
-
-            if (! $template->exists || ! $template->created_by) {
-                $template->created_by = $request->user()->id;
-            }
+            $template->created_by = $request->user()->id;
 
             $template->save();
 
@@ -287,7 +286,11 @@ class FormTemplateController extends Controller
 
     public function importFromDocument(Document $document)
     {
-        $document->loadMissing(['draf.documentType', 'originatingOffice', 'draf.requestedBy']);
+        $document->loadMissing([
+            'draf.documentType',
+            'originatingOffice.functionalDivLookup',
+            'draf.requestedBy.functionalDivLookup',
+        ]);
 
         $referenceCode = $document->draf?->reference_code;
 
@@ -296,7 +299,9 @@ class FormTemplateController extends Controller
         }
 
         $attachmentPath = $document->downloadable_doc_path ?: $document->draf?->approved_attachment_url;
-        $responsible = $document->originatingOffice?->office
+        $responsible = $document->originatingOffice?->functionalDivLookup?->name
+            ?? $document->draf?->requestedBy?->functionalDivLookup?->name
+            ?? $document->originatingOffice?->office
             ?? $document->draf?->requestedBy?->office
             ?? $document->draf?->requestedBy?->name
             ?? 'N/A';
@@ -315,10 +320,7 @@ class FormTemplateController extends Controller
         $template->document_location = $document->location ?? 'Repository';
         $template->status = $document->status?->value ?? DocumentStatus::ACTIVE->value;
         $template->downloadable_attachment_path = $attachmentPath;
-
-        if (! $template->exists || ! $template->created_by) {
-            $template->created_by = request()->user()->id;
-        }
+        $template->created_by = request()->user()->id;
 
         $template->save();
 

@@ -11,6 +11,7 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Draf;
 use App\Models\FormTemplate;
+use App\Models\FuncDiv;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -33,7 +34,7 @@ class FormTemplateRepositoryTest extends TestCase
         $response->assertOk();
         $this->assertStringContainsString('form-templates-import-template.csv', (string) $response->headers->get('content-disposition'));
         $this->assertStringContainsString('text/csv', (string) $response->headers->get('content-type'));
-        $this->assertStringContainsString('document_type,document_reference_code,doc_title,responsible', $response->streamedContent());
+        $this->assertStringContainsString('document_type,document_reference_code,doc_title,originating_office,person_responsible', $response->streamedContent());
     }
 
     public function test_admin_can_create_a_form_template_using_attachment_url(): void
@@ -146,8 +147,13 @@ class FormTemplateRepositoryTest extends TestCase
             'role' => UserRole::ADMIN,
         ]);
 
+        $functionalDivision = FuncDiv::create([
+            'name' => 'Curriculum Implementation Division',
+        ]);
+
         $requester = User::factory()->create([
-            'office' => 'Curriculum Implementation Division',
+            'office' => 'Schools Division Office',
+            'functional_div_id' => $functionalDivision->id,
         ]);
 
         $documentType = DocumentType::create([
@@ -274,8 +280,8 @@ class FormTemplateRepositoryTest extends TestCase
         ]);
 
         $csv = implode("\n", [
-            'document_type,document_reference_code,doc_title,responsible,revision_number,effectivity_date,document_location,status,downloadable_attachment_url',
-            'Form/Template,CSV-001,CSV Imported Template,Records Office,01,2026-09-25,Repository,active,https://example.com/csv-template.pdf',
+            'document_type,document_reference_code,doc_title,originating_office,person_responsible,revision_number,effectivity_date,document_location,status,downloadable_attachment_url',
+            'Form/Template,CSV-001,CSV Imported Template,Records Office,John Doe,01,2026-09-25,Repository,active,https://example.com/csv-template.pdf',
         ]);
 
         $file = UploadedFile::fake()->createWithContent('form-templates.csv', $csv);
@@ -289,6 +295,7 @@ class FormTemplateRepositoryTest extends TestCase
         $this->assertDatabaseHas('form_templates', [
             'document_reference_code' => 'CSV-001',
             'doc_title' => 'CSV Imported Template',
+            'created_by' => $admin->id,
             'downloadable_attachment_path' => 'https://example.com/csv-template.pdf',
         ]);
     }
