@@ -102,8 +102,8 @@
                                 <div class="font-semibold text-slate-900">{{ $document->doc_title }}</div>
                                 <!-- <div class="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $document->status->label() }}</div> -->
                             </td>
-                            <td class="px-4 py-3">—</td>
                             <td class="px-4 py-3">{{ $document->responsible }}</td>
+                            <td class="px-4 py-3">{{ $document->uploader?->name ?? 'N/A' }}</td>
                             <td class="px-4 py-3 text-center font-semibold">{{ $document->revision_number ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->effectivity_date?->format('F d, Y') ?? 'N/A' }}</td>
                             <td class="px-4 py-3">{{ $document->document_location ?? 'N/A' }}</td>
@@ -139,7 +139,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-8 text-center text-slate-500">No forms or templates are currently available.</td>
+                            <td colspan="9" class="px-4 py-8 text-center text-slate-500">No forms or templates are currently available.</td>
                         </tr>
                     @endforelse
                 </tbody>

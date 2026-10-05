@@ -10,6 +10,7 @@ use App\Enums\UserRole;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Draf;
+use App\Models\FormTemplate;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -105,6 +106,35 @@ class FormTemplateRepositoryTest extends TestCase
             ->assertSee('Quality Control Plan Template')
             ->assertSee('Form/Template')
             ->assertSee('FT-001');
+    }
+
+    public function test_authenticated_user_can_open_forms_print_preview_with_selected_document_type(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'role' => UserRole::ADMIN,
+        ]);
+
+        $documentType = DocumentType::create([
+            'name' => 'Form/Template',
+            'description' => 'Standardized forms and templates.',
+            'is_active' => true,
+        ]);
+
+        FormTemplate::create([
+            'document_type_id' => $documentType->id,
+            'document_reference_code' => 'PRINT-001',
+            'doc_title' => 'Printable Template',
+            'responsible' => 'QMS Unit',
+            'status' => DocumentStatus::ACTIVE->value,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('forms.print', ['document_type_id' => $documentType->id]))
+            ->assertOk()
+            ->assertSee('Document Master List')
+            ->assertSee('Document Type')
+            ->assertSee('Form/Template');
     }
 
     public function test_admin_can_import_a_registered_document_into_form_templates(): void

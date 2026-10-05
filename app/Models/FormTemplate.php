@@ -16,6 +16,7 @@ class FormTemplate extends Model
         'document_reference_code',
         'doc_title',
         'responsible',
+        'created_by',
         'revision_number',
         'effectivity_date',
         'document_location',
@@ -31,5 +32,10 @@ class FormTemplate extends Model
     public function documentType(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class);
+    }
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

@@ -18,13 +18,16 @@ class FormTemplateController extends Controller
     public function index(Request $request)
     {
         $templates = FormTemplate::query()
-            ->with('documentType')
+            ->with(['documentType', 'uploader'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($sub) use ($search) {
                     $sub->where('document_reference_code', 'like', "%{$search}%")
                         ->orWhere('doc_title', 'like', "%{$search}%")
                         ->orWhere('responsible', 'like', "%{$search}%")
                         ->orWhere('document_location', 'like', "%{$search}%")
+                        ->orWhereHas('uploader', function ($uploaderQuery) use ($search) {
+                            $uploaderQuery->where('name', 'like', "%{$search}%");
+                        })
                         ->orWhereHas('documentType', function ($typeQuery) use ($search) {
                             $typeQuery->where('name', 'like', "%{$search}%");
                         });
@@ -89,6 +92,7 @@ class FormTemplateController extends Controller
             'document_reference_code' => $validated['document_reference_code'],
             'doc_title' => $validated['doc_title'],
             'responsible' => $validated['responsible'],
+            'created_by' => $request->user()->id,
             'revision_number' => $validated['revision_number'] ?? null,
             'effectivity_date' => $validated['effectivity_date'] ?? null,
             'document_location' => $validated['document_location'] ?? null,
@@ -248,19 +252,24 @@ class FormTemplateController extends Controller
                 ?? ''
             ));
 
-            FormTemplate::updateOrCreate(
-                ['document_reference_code' => $referenceCode],
-                [
-                    'document_type_id' => $documentTypeId,
-                    'doc_title' => $docTitle,
-                    'responsible' => $responsible,
-                    'revision_number' => trim((string) ($rowData['revision_number'] ?? '')) ?: null,
-                    'effectivity_date' => $effectivityDate,
-                    'document_location' => trim((string) ($rowData['document_location'] ?? '')) ?: null,
-                    'status' => $status,
-                    'downloadable_attachment_path' => $attachment !== '' ? $attachment : null,
-                ]
-            );
+            $template = FormTemplate::firstOrNew([
+                'document_reference_code' => $referenceCode,
+            ]);
+
+            $template->document_type_id = $documentTypeId;
+            $template->doc_title = $docTitle;
+            $template->responsible = $responsible;
+            $template->revision_number = trim((string) ($rowData['revision_number'] ?? '')) ?: null;
+            $template->effectivity_date = $effectivityDate;
+            $template->document_location = trim((string) ($rowData['document_location'] ?? '')) ?: null;
+            $template->status = $status;
+            $template->downloadable_attachment_path = $attachment !== '' ? $attachment : null;
+
+            if (! $template->exists || ! $template->created_by) {
+                $template->created_by = $request->user()->id;
+            }
+
+            $template->save();
 
             $imported++;
         }
@@ -292,21 +301,26 @@ class FormTemplateController extends Controller
             ?? $document->draf?->requestedBy?->name
             ?? 'N/A';
 
-        FormTemplate::updateOrCreate(
-            ['document_reference_code' => $referenceCode],
-            [
-                'document_type_id' => $document->draf?->doc_type_id,
-                'doc_title' => $document->draf?->title ?? $referenceCode,
-                'responsible' => $responsible,
-                'revision_number' => $document->draf?->new_revision_number
-                    ?? $document->draf?->current_revision_no,
-                'effectivity_date' => $document->draf?->effectivity_date
-                    ?? $document->draf?->date_requested,
-                'document_location' => $document->location ?? 'Repository',
-                'status' => $document->status?->value ?? DocumentStatus::ACTIVE->value,
-                'downloadable_attachment_path' => $attachmentPath,
-            ]
-        );
+        $template = FormTemplate::firstOrNew([
+            'document_reference_code' => $referenceCode,
+        ]);
+
+        $template->document_type_id = $document->draf?->doc_type_id;
+        $template->doc_title = $document->draf?->title ?? $referenceCode;
+        $template->responsible = $responsible;
+        $template->revision_number = $document->draf?->new_revision_number
+            ?? $document->draf?->current_revision_no;
+        $template->effectivity_date = $document->draf?->effectivity_date
+            ?? $document->draf?->date_requested;
+        $template->document_location = $document->location ?? 'Repository';
+        $template->status = $document->status?->value ?? DocumentStatus::ACTIVE->value;
+        $template->downloadable_attachment_path = $attachmentPath;
+
+        if (! $template->exists || ! $template->created_by) {
+            $template->created_by = request()->user()->id;
+        }
+
+        $template->save();
 
         return back()->with('success', 'Registered document added to forms/templates.');
     }

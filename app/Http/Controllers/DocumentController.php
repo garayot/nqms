@@ -16,7 +16,7 @@ class DocumentController extends Controller
     public function publicPrint(Request $request)
     {
         $documents = FormTemplate::query()
-            ->with('documentType')
+            ->with(['documentType', 'uploader'])
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->string('status')->value());
             })
@@ -34,7 +34,10 @@ class DocumentController extends Controller
                     $sub->where('document_reference_code', 'like', "%{$search}%")
                         ->orWhere('doc_title', 'like', "%{$search}%")
                         ->orWhere('responsible', 'like', "%{$search}%")
-                        ->orWhere('document_location', 'like', "%{$search}%");
+                        ->orWhere('document_location', 'like', "%{$search}%")
+                        ->orWhereHas('uploader', function ($uploaderQuery) use ($search) {
+                            $uploaderQuery->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->orderBy('document_reference_code')
@@ -56,7 +59,7 @@ class DocumentController extends Controller
     public function publicIndex(Request $request)
     {
         $documents = FormTemplate::query()
-            ->with('documentType')
+            ->with(['documentType', 'uploader'])
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->string('status')->value());
             })
@@ -74,7 +77,10 @@ class DocumentController extends Controller
                     $sub->where('document_reference_code', 'like', "%{$search}%")
                         ->orWhere('doc_title', 'like', "%{$search}%")
                         ->orWhere('responsible', 'like', "%{$search}%")
-                        ->orWhere('document_location', 'like', "%{$search}%");
+                        ->orWhere('document_location', 'like', "%{$search}%")
+                        ->orWhereHas('uploader', function ($uploaderQuery) use ($search) {
+                            $uploaderQuery->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->latest()
