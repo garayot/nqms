@@ -187,7 +187,7 @@
             }
 
             .list-table th:nth-child(2) {
-                width: 29%;
+                width: 25%;
             }
 
             .list-table th:nth-child(3) {
@@ -195,18 +195,22 @@
             }
 
             .list-table th:nth-child(4) {
-                width: 10%;
+                width: 11%;
             }
 
             .list-table th:nth-child(5) {
-                width: 12%;
+                width: 10%;
             }
 
             .list-table th:nth-child(6) {
-                width: 14%;
+                width: 11%;
             }
 
             .list-table th:nth-child(7) {
+                width: 8%;
+            }
+
+            .list-table th:nth-child(8) {
                 width: 8%;
             }
 
