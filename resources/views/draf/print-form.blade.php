@@ -7,8 +7,8 @@
     $reviewerName = $draf->reviewedBy?->name ?? '___________________________';
     $approverName = $draf->approvedBy?->name ?? '___________________________';
 
-    $headerLogoPath = storage_path('app/public/logo/header.png');
-    $footerLogoPath = storage_path('app/public/logo/footer.png');
+    $headerLogoPath = public_path('logo/header.png');
+    $footerLogoPath = public_path('logo/footer.png');
 
     $headerLogo = file_exists($headerLogoPath)
         ? 'data:image/png;base64,' . base64_encode(file_get_contents($headerLogoPath))
@@ -295,8 +295,8 @@
             <tr>
                 <td colspan="2"><span class="label">Requested by:</span></td>
                 <td colspan="6" class="signature">
-                    <div class="fill">{{ $requesterName }}</div>
-                    <div class="small">Signature over Printed Name and Position</div>
+                    <div class="fill">DEMOSTHENES J. QUINAL</div>
+                    <div class="small">School Governance and Operations Division - Chief</div>
                 </td>
                 <td colspan="3"><span class="label">Date of Request:</span></td>
                 <td colspan="3">{{ $draf->date_requested?->format('M d, Y') ?: '________________' }}</td>
@@ -319,13 +319,13 @@
             <tr>
                 <td style="width: 18%;"><span class="label">Reviewed by:</span></td>
                 <td colspan="6" class="signature">
-                    <div class="fill">{{ $reviewerName }}</div>
-                    <div class="small">Signature over Printed Name and Position (Head of Committee)</div>
+                    <div class="fill">WILLY S. DUMPIT</div>
+                    <div class="small">QMS Lead</div>
                 </td>
                 <td colspan="2"><span class="label">Approved by:</span></td>
                 <td colspan="5" class="signature">
-                    <div class="fill">{{ $approverName }}</div>
-                    <div class="small">Signature over Printed Name and Position</div>
+                    <div class="fill">GEMMA A. DE PAZ</div>
+                    <div class="small">Schools Division Superintendent</div>
                 </td>
             </tr>
             <tr>
@@ -354,11 +354,11 @@
             </tr>
             <tr>
                 <td colspan="6" class="signature">
-                    <div class="fill">_______________________________________</div>
+                    <div class="fill">LUCILLE C. ABUNALES</div>
                     <div class="small">Lead, Knowledge Management Team</div>
                 </td>
                 <td colspan="8" class="signature">
-                    <div class="fill">_______________________________________</div>
+                    <div class="fill">DEMOSTHENES J. QUINAL</div>
                     <div class="small">Process Holder</div>
                 </td>
             </tr>
