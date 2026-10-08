@@ -1,6 +1,6 @@
 @php
-    $headerLogoPath = storage_path('app/public/logo/header.png');
-    $footerLogoPath = storage_path('app/public/logo/footer.png');
+    $headerLogoPath = public_path('logo/header.png');
+    $footerLogoPath = public_path('logo/footer.png');
 
     $headerLogo = file_exists($headerLogoPath)
         ? 'data:image/png;base64,' . base64_encode(file_get_contents($headerLogoPath))
