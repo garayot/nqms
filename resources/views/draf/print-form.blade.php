@@ -4,6 +4,7 @@
     $reviewValue = $draf->review?->value ?? null;
     $approvalValue = $draf->approval?->value ?? null;
     $requesterName = $draf->requestedBy?->name ?? '___________________________';
+    $requesterPosition = $draf->requestedBy?->position?->position_name ?: '-';
     $reviewerName = $draf->reviewedBy?->name ?? '___________________________';
     $approverName = $draf->approvedBy?->name ?? '___________________________';
 
@@ -25,6 +26,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}">
     <title>DRAF Form</title>
     <style>
         @font-face {
@@ -295,8 +299,8 @@
             <tr>
                 <td colspan="2"><span class="label">Requested by:</span></td>
                 <td colspan="6" class="signature">
-                    <div class="fill">DEMOSTHENES J. QUINAL</div>
-                    <div class="small">School Governance and Operations Division - Chief</div>
+                    <div class="fill" style="text-transform: uppercase;">{{ strtoupper($requesterName) }}</div>
+                    <div class="small">{{ $requesterPosition }}</div>
                 </td>
                 <td colspan="3"><span class="label">Date of Request:</span></td>
                 <td colspan="3">{{ $draf->date_requested?->format('M d, Y') ?: '________________' }}</td>
@@ -358,7 +362,7 @@
                     <div class="small">Lead, Knowledge Management Team</div>
                 </td>
                 <td colspan="8" class="signature">
-                    <div class="fill">DEMOSTHENES J. QUINAL</div>
+                    <div class="fill" style="text-transform: uppercase;">{{ strtoupper($requesterName) }}</div>
                     <div class="small">Process Holder</div>
                 </td>
             </tr>
