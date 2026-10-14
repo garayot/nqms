@@ -175,8 +175,12 @@
 
         .section-label {
             font-weight: 700;
-            background: #f3f4f6;
+            background: #acb9ca;
             text-transform: uppercase;
+        }
+
+        .label-cell {
+            background: #9cc3e5;
         }
 
         .label {
@@ -247,10 +251,10 @@
         <table>
             <tr>
                 <td colspan="8" class="section-label">Section I - Request</td>
-                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number ?: '________________' }}</td>
+                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number }}</td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Request for:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Request for:</span></td>
                 <td colspan="10">
                     <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '✓' : '' }}</span>Creation</span>
                     <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '✓' : '' }}</span>Revision</span>
@@ -258,7 +262,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Type:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Document Type:</span></td>
                 <td colspan="10">
                     @php
                         $docName = strtolower((string) ($draf->documentType?->name ?? ''));
@@ -272,7 +276,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Applicability:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Applicability:</span></td>
                 <td colspan="10">
                     <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '✓' : '' }}</span>CO</span>
                     <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '✓' : '' }}</span>RO</span>
@@ -281,14 +285,14 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Title:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Document Title:</span></td>
                 <td colspan="10"><span class="fill">{{ $draf->title ?: '___________________________' }}</span></td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Reference Code:</span></td>
-                <td colspan="3"><span class="fill">{{ $draf->reference_code ?: '________________' }}</span></td>
-                <td colspan="6"><span class="label">Current Revision Number:</span></td>
-                <td><span class="fill">{{ $draf->current_revision_no ?: '________________' }}</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Document Reference Code:</span></td>
+                <td colspan="3"><span class="fill">{{ $draf->reference_code }}</span></td>
+                <td colspan="6" class="label-cell"><span class="label">Current Revision Number:</span></td>
+                <td><span class="fill">{{ $draf->current_revision_no }}</span></td>
             </tr>
             <tr>
                 <td colspan="14" class="section-label">Reason for the request:</td>
@@ -297,13 +301,13 @@
                 <td colspan="14" class="text-area">{{ $draf->reasonOption?->name ?? $draf->open_ended_reason ?? $draf->reason ?: ' ' }}</td>
             </tr>
             <tr>
-                <td colspan="2"><span class="label">Requested by:</span></td>
+                <td colspan="2" class="label-cell"><span class="label">Requested by:</span></td>
                 <td colspan="6" class="signature">
                     <div class="fill" style="text-transform: uppercase;">{{ strtoupper($requesterName) }}</div>
                     <div class="small">{{ $requesterPosition }}</div>
                 </td>
-                <td colspan="3"><span class="label">Date of Request:</span></td>
-                <td colspan="3">{{ $draf->date_requested?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="3" class="label-cell"><span class="label">Date of Request:</span></td>
+                <td colspan="3">{{ $draf->date_requested?->format('M d, Y') }}</td>
             </tr>
 
             <tr>
@@ -321,40 +325,40 @@
                 <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason2 ?: ' ' }}</div></td>
             </tr>
             <tr>
-                <td style="width: 18%;"><span class="label">Reviewed by:</span></td>
-                <td colspan="6" class="signature">
+                <td colspan="2" class="label-cell"><span class="label">Reviewed by:</span></td>
+                <td colspan="5" class="signature">
                     <div class="fill">WILLY S. DUMPIT</div>
                     <div class="small">QMS Lead</div>
                 </td>
-                <td colspan="2"><span class="label">Approved by:</span></td>
+                <td colspan="2" class="label-cell"><span class="label">Approved by:</span></td>
                 <td colspan="5" class="signature">
                     <div class="fill">GEMMA A. DE PAZ</div>
                     <div class="small">Schools Division Superintendent</div>
                 </td>
             </tr>
             <tr>
-                <td><span class="label">Date:</span></td>
-                <td colspan="6">{{ $draf->reviewed_at?->format('M d, Y') ?: '________________' }}</td>
-                <td colspan="2"><span class="label">Date:</span></td>
-                <td colspan="5">{{ $draf->approved_at?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="2" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="5">{{ $draf->reviewed_at?->format('M d, Y') }}</td>
+                <td colspan="2" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="5">{{ $draf->approved_at?->format('M d, Y')}}</td>
             </tr>
 
             <tr>
                 <td colspan="14" class="section-label">Section IV – Registration and Distribution</td>
             </tr>
             <tr>
-                <td colspan="5"><span class="label">NEW REVISION NUMBER:</span></td>
-                <td colspan="5"><span class="label">EFFECTIVITY DATE:</span></td>
-                <td colspan="4"><span class="label">DATE REGISTERED IN DML:</span></td>
+                <td colspan="5" class="label-cell"><span class="label">NEW REVISION NUMBER:</span></td>
+                <td colspan="5" class="label-cell"><span class="label">EFFECTIVITY DATE:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">DATE REGISTERED IN DML:</span></td>
             </tr>
             <tr>
-                <td colspan="5">{{ $draf->new_revision_number ?: '________________' }}</td>
-                <td colspan="5">{{ $draf->effectivity_date?->format('M d, Y') ?: '________________' }}</td>
-                <td colspan="4">{{ $draf->date_registered?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="5">{{ $draf->new_revision_number }}</td>
+                <td colspan="5">{{ $draf->effectivity_date?->format('M d, Y') }}</td>
+                <td colspan="4">{{ $draf->date_registered?->format('M d, Y') }}</td>
             </tr>
             <tr>
-                <td colspan="6"><span class="label">CONTROLLED COPY FILED BY:</span></td>
-                <td colspan="8"><span class="label">COPY RECEIVED BY:</span></td>
+                <td colspan="6" class="label-cell"><span class="label">CONTROLLED COPY FILED BY:</span></td>
+                <td colspan="8" class="label-cell"><span class="label">COPY RECEIVED BY:</span></td>
             </tr>
             <tr>
                 <td colspan="6" class="signature">
@@ -367,8 +371,8 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="6"><span class="label">Date:</span></td>
-                <td colspan="8"><span class="label">Date:</span></td>
+                <td colspan="6" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="8" class="label-cell"><span class="label">Date:</span></td>
             </tr>
         </table>
     </div>
