@@ -43,11 +43,20 @@
         }
 
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: 'Arial Narrow', Arial, sans-serif;
             font-size: 11px;
             color: #111827;
             margin: 0;
             padding: 0;
+        }
+
+        .form-title {
+            margin: 0 0 6px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
         }
 
         .page-wrapper {
@@ -72,7 +81,7 @@
         .gov-header img {
             width: 310px;
             height: 204px;
-            margin-bottom: -10px;
+            margin-bottom: -30px;
         }
 
         .gov-title {
@@ -171,12 +180,14 @@
             line-height: 1.35;
             overflow-wrap: anywhere;
             word-break: break-word;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .section-label {
             font-weight: 700;
             background: #acb9ca;
             text-transform: uppercase;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .label-cell {
@@ -184,7 +195,8 @@
         }
 
         .label {
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .checkbox {
@@ -194,7 +206,7 @@
             border: 1px solid #000;
             text-align: center;
             line-height: 13px;
-            font-family: "DejaVu Sans", sans-serif;
+            font-family: 'Arial Narrow', Arial, sans-serif;
             font-size: 11px;
             vertical-align: middle;
             margin-right: 4px;
@@ -214,6 +226,21 @@
             flex-shrink: 0;
         }
 
+        .doc-type-label {
+            vertical-align: middle;
+        }
+
+        .doc-type-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 2px;
+        }
+
+        .doc-type-row .inline {
+            margin-right: 0;
+        }
+
         .fill {
             min-height: 18px;
             display: block;
@@ -222,17 +249,26 @@
         }
 
         .signature {
-            font-weight: 600;
+            font-weight: 700;
             text-align: center;
         }
 
         .small {
             font-size: 10px;
             color: #475569;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .text-area {
-            min-height: 56px;
+            height: 60px;
+        }
+
+        .reason-box {
+            min-height: 80px;
+        }
+
+        .reason-box .fill {
+            min-height: 60px;
         }
     </style>
 </head>
@@ -242,46 +278,56 @@
         <div class="gov-header">
             <div class="top-row">
                 <img src="{{ $headerLogo }}" alt="DepEd Logo">
-                
             </div>
         </div>
     
 
     <div class="page">
+        <hr>
+        <br>
+        <h1 class="form-title">DOCUMENT REVIEW and APPROVAL FORM (DRAF)</h1>
         <table>
             <tr>
                 <td colspan="8" class="section-label">Section I - Request</td>
-                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number }}</td>
+                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number ?: '_______________' }}</td>
             </tr>
             <tr>
                 <td colspan="4" class="label-cell"><span class="label">Request for:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '✓' : '' }}</span>Creation</span>
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '✓' : '' }}</span>Revision</span>
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '✓' : '' }}</span>Disposition/Deletion</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '/' : '' }}</span>Creation</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '/' : '' }}</span>Revision</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '/' : '' }}</span>Disposition/Deletion</span>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="label-cell"><span class="label">Document Type:</span></td>
+                <td colspan="4" class="label-cell doc-type-label"><span class="label">Document Type:</span></td>
                 <td colspan="10">
                     @php
                         $docName = strtolower((string) ($draf->documentType?->name ?? ''));
                     @endphp
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '✓' : '' }}</span>Form/Template</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '✓' : '' }}</span>QMS Manual</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '✓' : '' }}</span>PAWIM</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '✓' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '✓' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '✓' : '' }}</span>Quality Control Plan</span></div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '/' : '' }}</span>Form/Template</span>
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '/' : '' }}</span>QMS Manual</span>
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '/' : '' }}</span>PAWIM</span>
+                    </div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '/' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span>
+                    </div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '/' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span>
+                    </div>
+                    <div class="doc-type-row" style="margin-bottom: 0;">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '/' : '' }}</span>Quality Control Plan</span>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="4" class="label-cell"><span class="label">Applicability:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '✓' : '' }}</span>CO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '✓' : '' }}</span>RO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '✓' : '' }}</span>SDO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '✓' : '' }}</span>School</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '/' : '' }}</span>CO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '/' : '' }}</span>RO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '/' : '' }}</span>SDO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '/' : '' }}</span>School</span>
                 </td>
             </tr>
             <tr>
@@ -315,14 +361,14 @@
                 <td colspan="7" class="section-label">Section III – Approval</td>
             </tr>
             <tr>
-                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '✓' : '' }}</span>Recommend Approval</span></td>
-                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
-                <td colspan="3"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '✓' : '' }}</span>Approved</span></td>
-                <td colspan="4"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '/' : '' }}</span>Recommend Approval</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '/' : '' }}</span>Disapproved</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '/' : '' }}</span>Approved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '/' : '' }}</span>Disapproved</span></td>
             </tr>
             <tr>
-                <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
-                <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason2 ?: ' ' }}</div></td>
+                <td colspan="7" class="reason-box"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
+                <td colspan="7" class="reason-box"><span class="label">Reason:</span><div class="fill">{{ $draf->reason2 ?: ' ' }}</div></td>
             </tr>
             <tr>
                 <td colspan="2" class="label-cell"><span class="label">Reviewed by:</span></td>
@@ -375,7 +421,10 @@
                 <td colspan="8" class="label-cell"><span class="label">Date:</span></td>
             </tr>
         </table>
+        <br>
+        <hr>
     </div>
+    
     
 
     <div class="pdf-footer">
