@@ -65,7 +65,16 @@
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Requested By</label>
-                    <input type="text" value="{{ auth()->user()->name }}" disabled class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                    @if (auth()->user()->isAdmin())
+                        <select name="requested_by" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#0f3d68] focus:outline-none">
+                            <option value="">Select requester</option>
+                            @foreach ($requesters as $requester)
+                                <option value="{{ $requester->id }}" {{ (string) old('requested_by', auth()->id()) === (string) $requester->id ? 'selected' : '' }}>{{ $requester->name }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <input type="text" value="{{ auth()->user()->name }}" disabled class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                    @endif
                 </div>
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Date Requested</label>

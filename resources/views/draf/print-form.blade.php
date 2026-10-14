@@ -4,6 +4,7 @@
     $reviewValue = $draf->review?->value ?? null;
     $approvalValue = $draf->approval?->value ?? null;
     $requesterName = $draf->requestedBy?->name ?? '___________________________';
+    $requesterPosition = $draf->requestedBy?->position?->position_name ?: '-';
     $reviewerName = $draf->reviewedBy?->name ?? '___________________________';
     $approverName = $draf->approvedBy?->name ?? '___________________________';
 
@@ -25,6 +26,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ asset(rawurlencode('Bislig SDO logo.ico')) }}">
     <title>DRAF Form</title>
     <style>
         @font-face {
@@ -39,11 +43,20 @@
         }
 
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: 'Arial Narrow', Arial, sans-serif;
             font-size: 11px;
             color: #111827;
             margin: 0;
             padding: 0;
+        }
+
+        .form-title {
+            margin: 0 0 6px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
         }
 
         .page-wrapper {
@@ -68,7 +81,7 @@
         .gov-header img {
             width: 310px;
             height: 204px;
-            margin-bottom: -10px;
+            margin-bottom: -30px;
         }
 
         .gov-title {
@@ -167,16 +180,23 @@
             line-height: 1.35;
             overflow-wrap: anywhere;
             word-break: break-word;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .section-label {
             font-weight: 700;
-            background: #f3f4f6;
+            background: #acb9ca;
             text-transform: uppercase;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .label-cell {
+            background: #9cc3e5;
         }
 
         .label {
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .checkbox {
@@ -186,7 +206,7 @@
             border: 1px solid #000;
             text-align: center;
             line-height: 13px;
-            font-family: "DejaVu Sans", sans-serif;
+            font-family: 'Arial Narrow', Arial, sans-serif;
             font-size: 11px;
             vertical-align: middle;
             margin-right: 4px;
@@ -206,6 +226,21 @@
             flex-shrink: 0;
         }
 
+        .doc-type-label {
+            vertical-align: middle;
+        }
+
+        .doc-type-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 2px;
+        }
+
+        .doc-type-row .inline {
+            margin-right: 0;
+        }
+
         .fill {
             min-height: 18px;
             display: block;
@@ -214,17 +249,26 @@
         }
 
         .signature {
-            font-weight: 600;
+            font-weight: 700;
             text-align: center;
         }
 
         .small {
             font-size: 10px;
             color: #475569;
+            font-family: 'Arial Narrow', Arial, sans-serif;
         }
 
         .text-area {
-            min-height: 56px;
+            height: 60px;
+        }
+
+        .reason-box {
+            min-height: 80px;
+        }
+
+        .reason-box .fill {
+            min-height: 60px;
         }
     </style>
 </head>
@@ -234,57 +278,67 @@
         <div class="gov-header">
             <div class="top-row">
                 <img src="{{ $headerLogo }}" alt="DepEd Logo">
-                
             </div>
         </div>
     
 
     <div class="page">
+        <hr>
+        <br>
+        <h1 class="form-title">DOCUMENT REVIEW and APPROVAL FORM (DRAF)</h1>
         <table>
             <tr>
                 <td colspan="8" class="section-label">Section I - Request</td>
-                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number ?: '________________' }}</td>
+                <td colspan="6" class="section-label" style="text-align: right;">DRAF No. {{ $draf->draf_number ?: '_______________' }}</td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Request for:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Request for:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '✓' : '' }}</span>Creation</span>
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '✓' : '' }}</span>Revision</span>
-                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '✓' : '' }}</span>Disposition/Deletion</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'creation' ? '/' : '' }}</span>Creation</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'revision' ? '/' : '' }}</span>Revision</span>
+                    <span class="inline"><span class="checkbox">{{ $requestForValue === 'disposition' ? '/' : '' }}</span>Disposition/Deletion</span>
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Type:</span></td>
+                <td colspan="4" class="label-cell doc-type-label"><span class="label">Document Type:</span></td>
                 <td colspan="10">
                     @php
                         $docName = strtolower((string) ($draf->documentType?->name ?? ''));
                     @endphp
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '✓' : '' }}</span>Form/Template</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '✓' : '' }}</span>QMS Manual</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '✓' : '' }}</span>PAWIM</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '✓' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '✓' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span></div>
-                    <div><span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '✓' : '' }}</span>Quality Control Plan</span></div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '/' : '' }}</span>Form/Template</span>
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '/' : '' }}</span>QMS Manual</span>
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '/' : '' }}</span>PAWIM</span>
+                    </div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '/' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span>
+                    </div>
+                    <div class="doc-type-row">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '/' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span>
+                    </div>
+                    <div class="doc-type-row" style="margin-bottom: 0;">
+                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '/' : '' }}</span>Quality Control Plan</span>
+                    </div>
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Applicability:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Applicability:</span></td>
                 <td colspan="10">
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '✓' : '' }}</span>CO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '✓' : '' }}</span>RO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '✓' : '' }}</span>SDO</span>
-                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '✓' : '' }}</span>School</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'co' ? '/' : '' }}</span>CO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'ro' ? '/' : '' }}</span>RO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'sdo' ? '/' : '' }}</span>SDO</span>
+                    <span class="inline"><span class="checkbox">{{ $applicabilityValue === 'school' ? '/' : '' }}</span>School</span>
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Title:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Document Title:</span></td>
                 <td colspan="10"><span class="fill">{{ $draf->title ?: '___________________________' }}</span></td>
             </tr>
             <tr>
-                <td colspan="4"><span class="label">Document Reference Code:</span></td>
-                <td colspan="3"><span class="fill">{{ $draf->reference_code ?: '________________' }}</span></td>
-                <td colspan="6"><span class="label">Current Revision Number:</span></td>
-                <td><span class="fill">{{ $draf->current_revision_no ?: '________________' }}</span></td>
+                <td colspan="4" class="label-cell"><span class="label">Document Reference Code:</span></td>
+                <td colspan="3"><span class="fill">{{ $draf->reference_code }}</span></td>
+                <td colspan="6" class="label-cell"><span class="label">Current Revision Number:</span></td>
+                <td><span class="fill">{{ $draf->current_revision_no }}</span></td>
             </tr>
             <tr>
                 <td colspan="14" class="section-label">Reason for the request:</td>
@@ -293,13 +347,13 @@
                 <td colspan="14" class="text-area">{{ $draf->reasonOption?->name ?? $draf->open_ended_reason ?? $draf->reason ?: ' ' }}</td>
             </tr>
             <tr>
-                <td colspan="2"><span class="label">Requested by:</span></td>
+                <td colspan="2" class="label-cell"><span class="label">Requested by:</span></td>
                 <td colspan="6" class="signature">
-                    <div class="fill">DEMOSTHENES J. QUINAL</div>
-                    <div class="small">School Governance and Operations Division - Chief</div>
+                    <div class="fill" style="text-transform: uppercase;">{{ strtoupper($requesterName) }}</div>
+                    <div class="small">{{ $requesterPosition }}</div>
                 </td>
-                <td colspan="3"><span class="label">Date of Request:</span></td>
-                <td colspan="3">{{ $draf->date_requested?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="3" class="label-cell"><span class="label">Date of Request:</span></td>
+                <td colspan="3">{{ $draf->date_requested?->format('M d, Y') }}</td>
             </tr>
 
             <tr>
@@ -307,50 +361,50 @@
                 <td colspan="7" class="section-label">Section III – Approval</td>
             </tr>
             <tr>
-                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '✓' : '' }}</span>Recommend Approval</span></td>
-                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
-                <td colspan="3"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '✓' : '' }}</span>Approved</span></td>
-                <td colspan="4"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '✓' : '' }}</span>Disapproved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $reviewValue === 'recommend_approval' ? '/' : '' }}</span>Recommend Approval</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $reviewValue === 'disapproved' ? '/' : '' }}</span>Disapproved</span></td>
+                <td colspan="3"><span class="inline"><span class="checkbox">{{ $approvalValue === 'approved' ? '/' : '' }}</span>Approved</span></td>
+                <td colspan="4"><span class="inline"><span class="checkbox">{{ $approvalValue === 'disapproved' ? '/' : '' }}</span>Disapproved</span></td>
             </tr>
             <tr>
-                <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
-                <td colspan="7"><span class="label">Reason:</span><div class="fill">{{ $draf->reason2 ?: ' ' }}</div></td>
+                <td colspan="7" class="reason-box"><span class="label">Reason:</span><div class="fill">{{ $draf->reason1 ?: ' ' }}</div></td>
+                <td colspan="7" class="reason-box"><span class="label">Reason:</span><div class="fill">{{ $draf->reason2 ?: ' ' }}</div></td>
             </tr>
             <tr>
-                <td style="width: 18%;"><span class="label">Reviewed by:</span></td>
-                <td colspan="6" class="signature">
+                <td colspan="2" class="label-cell"><span class="label">Reviewed by:</span></td>
+                <td colspan="5" class="signature">
                     <div class="fill">WILLY S. DUMPIT</div>
                     <div class="small">QMS Lead</div>
                 </td>
-                <td colspan="2"><span class="label">Approved by:</span></td>
+                <td colspan="2" class="label-cell"><span class="label">Approved by:</span></td>
                 <td colspan="5" class="signature">
                     <div class="fill">GEMMA A. DE PAZ</div>
                     <div class="small">Schools Division Superintendent</div>
                 </td>
             </tr>
             <tr>
-                <td><span class="label">Date:</span></td>
-                <td colspan="6">{{ $draf->reviewed_at?->format('M d, Y') ?: '________________' }}</td>
-                <td colspan="2"><span class="label">Date:</span></td>
-                <td colspan="5">{{ $draf->approved_at?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="2" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="5">{{ $draf->reviewed_at?->format('M d, Y') }}</td>
+                <td colspan="2" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="5">{{ $draf->approved_at?->format('M d, Y')}}</td>
             </tr>
 
             <tr>
                 <td colspan="14" class="section-label">Section IV – Registration and Distribution</td>
             </tr>
             <tr>
-                <td colspan="5"><span class="label">NEW REVISION NUMBER:</span></td>
-                <td colspan="5"><span class="label">EFFECTIVITY DATE:</span></td>
-                <td colspan="4"><span class="label">DATE REGISTERED IN DML:</span></td>
+                <td colspan="5" class="label-cell"><span class="label">NEW REVISION NUMBER:</span></td>
+                <td colspan="5" class="label-cell"><span class="label">EFFECTIVITY DATE:</span></td>
+                <td colspan="4" class="label-cell"><span class="label">DATE REGISTERED IN DML:</span></td>
             </tr>
             <tr>
-                <td colspan="5">{{ $draf->new_revision_number ?: '________________' }}</td>
-                <td colspan="5">{{ $draf->effectivity_date?->format('M d, Y') ?: '________________' }}</td>
-                <td colspan="4">{{ $draf->date_registered?->format('M d, Y') ?: '________________' }}</td>
+                <td colspan="5">{{ $draf->new_revision_number }}</td>
+                <td colspan="5">{{ $draf->effectivity_date?->format('M d, Y') }}</td>
+                <td colspan="4">{{ $draf->date_registered?->format('M d, Y') }}</td>
             </tr>
             <tr>
-                <td colspan="6"><span class="label">CONTROLLED COPY FILED BY:</span></td>
-                <td colspan="8"><span class="label">COPY RECEIVED BY:</span></td>
+                <td colspan="6" class="label-cell"><span class="label">CONTROLLED COPY FILED BY:</span></td>
+                <td colspan="8" class="label-cell"><span class="label">COPY RECEIVED BY:</span></td>
             </tr>
             <tr>
                 <td colspan="6" class="signature">
@@ -358,16 +412,19 @@
                     <div class="small">Lead, Knowledge Management Team</div>
                 </td>
                 <td colspan="8" class="signature">
-                    <div class="fill">DEMOSTHENES J. QUINAL</div>
+                    <div class="fill" style="text-transform: uppercase;">{{ strtoupper($requesterName) }}</div>
                     <div class="small">Process Holder</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="6"><span class="label">Date:</span></td>
-                <td colspan="8"><span class="label">Date:</span></td>
+                <td colspan="6" class="label-cell"><span class="label">Date:</span></td>
+                <td colspan="8" class="label-cell"><span class="label">Date:</span></td>
             </tr>
         </table>
+        <br>
+        <hr>
     </div>
+    
     
 
     <div class="pdf-footer">

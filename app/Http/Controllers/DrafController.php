@@ -9,6 +9,7 @@ use App\Models\DocumentType;
 use App\Models\Draf;
 use App\Models\DrafHistory;
 use App\Models\Reason;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,8 +29,9 @@ class DrafController extends Controller
     {
         $documentTypes = DocumentType::active()->get();
         $reasons = Reason::query()->orderBy('name')->get();
+        $requesters = User::query()->orderBy('name')->get();
 
-        return view('draf.create', compact('documentTypes', 'reasons'));
+        return view('draf.create', compact('documentTypes', 'reasons', 'requesters'));
     }
 
     public function store(StoreDrafRequest $request)
@@ -50,7 +52,9 @@ class DrafController extends Controller
             $validated['reason'] = null;
         }
 
-        $validated['requested_by'] = Auth::id();
+        $validated['requested_by'] = $request->user()?->isAdmin() && $request->filled('requested_by')
+            ? (int) $request->input('requested_by')
+            : Auth::id();
         $validated['status'] = DrafStatus::DRAFT->value;
 
         $draf = Draf::create($validated);

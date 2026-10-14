@@ -2,6 +2,10 @@
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        @php
+            $visibleTeams = $teams->filter(fn ($team) => $team->team_leads_count > 0 || $team->team_members_count > 0 || $team->team_secretariat_count > 0);
+        @endphp
+
         <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">QMS Teams</p>
@@ -18,14 +22,20 @@
             @endauth
         </div>
 
-        @if ($teams->isEmpty())
+        @if ($visibleTeams->isEmpty())
             <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
                 <p class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">No teams yet</p>
                 <p class="mt-2 text-sm text-slate-600">Teams will appear here once administrators create them.</p>
             </div>
         @else
             <div class="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-                @foreach ($teams as $team)
+                @foreach ($visibleTeams as $team)
+                    @php
+                        $hasLeadCount = $team->team_leads_count > 0;
+                        $hasMemberCount = $team->team_members_count > 0;
+                        $hasSecretariatCount = $team->team_secretariat_count > 0;
+                    @endphp
+
                     <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="flex items-start justify-between gap-4">
                             <div>
@@ -35,19 +45,25 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 grid grid-cols-3 gap-3 text-center text-sm">
-                            <div class="rounded-xl bg-slate-50 px-3 py-4">
-                                <div class="text-lg font-bold text-slate-900">{{ $team->team_leads_count }}</div>
-                                <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Leads</div>
-                            </div>
-                            <div class="rounded-xl bg-slate-50 px-3 py-4">
-                                <div class="text-lg font-bold text-slate-900">{{ $team->team_members_count }}</div>
-                                <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Members</div>
-                            </div>
-                            <div class="rounded-xl bg-slate-50 px-3 py-4">
-                                <div class="text-lg font-bold text-slate-900">{{ $team->team_secretariat_count }}</div>
-                                <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Secretariat</div>
-                            </div>
+                        <div class="mt-6 grid gap-3 text-center text-sm" style="grid-template-columns: repeat({{ $hasLeadCount + $hasMemberCount + $hasSecretariatCount }}, minmax(0, 1fr));">
+                            @if ($hasLeadCount)
+                                <div class="rounded-xl bg-slate-50 px-3 py-4">
+                                    <div class="text-lg font-bold text-slate-900">{{ $team->team_leads_count }}</div>
+                                    <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Leads</div>
+                                </div>
+                            @endif
+                            @if ($hasMemberCount)
+                                <div class="rounded-xl bg-slate-50 px-3 py-4">
+                                    <div class="text-lg font-bold text-slate-900">{{ $team->team_members_count }}</div>
+                                    <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Members</div>
+                                </div>
+                            @endif
+                            @if ($hasSecretariatCount)
+                                <div class="rounded-xl bg-slate-50 px-3 py-4">
+                                    <div class="text-lg font-bold text-slate-900">{{ $team->team_secretariat_count }}</div>
+                                    <div class="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">Secretariat</div>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="mt-6 flex flex-wrap gap-3">

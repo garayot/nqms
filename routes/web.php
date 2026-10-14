@@ -44,6 +44,7 @@ Route::get('/access/process-groups/{processGroup}', [PublicFileAccessController:
 Route::get('/access/sub-processes/{subProcess}', [PublicFileAccessController::class, 'subProcess'])->name('public.file-access.sub-processes');
 
 Route::middleware('guest')->group(function () {
+    Route::redirect('/login', '/login/google')->name('login');
     Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
     Route::get('/login/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('login.google.callback');
 

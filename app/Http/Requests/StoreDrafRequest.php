@@ -30,6 +30,7 @@ class StoreDrafRequest extends FormRequest
             'open_ended_reason' => ['nullable', 'string', 'max:4000', 'required_without:reason_id'],
             'date_requested' => ['required', 'date'],
             'attachment_url' => ['nullable', 'url', 'max:2048'],
+            'requested_by' => ['nullable', 'exists:users,id'],
         ];
     }
 }
