@@ -129,6 +129,7 @@
 
                 <div class="mx-auto flex h-10 w-px justify-center bg-slate-300"></div>
 
+                @if ($isAdmin || $team->teamSecretariat->isNotEmpty())
                 <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                     <div class="flex flex-col items-center gap-4 text-center">
                         <div>
@@ -171,6 +172,7 @@
                         <p class="mt-4 text-center text-xs text-slate-500">No available users remain for this role.</p>
                     @endif
                 </section>
+                @endif
             </div>
         </div>
     </div>

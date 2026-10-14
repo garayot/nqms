@@ -22,11 +22,11 @@ class GoogleAuthController extends Controller
         $googleUser = Socialite::driver('google')->stateless()->user();
         $email = strtolower($googleUser->getEmail());
 
-        // if (! str_ends_with($email, '@deped.gov.ph')) {
-        //     return view('auth.account-not-authorized', [
-        //         'message' => 'Only official DepEd Google accounts may log in to this system.',
-        //     ]);
-        // }
+        if (! str_ends_with($email, '@deped.gov.ph')) {
+            return view('auth.account-not-authorized', [
+                'message' => 'Only official DepEd Google accounts may log in to this system.',
+            ]);
+        }
 
         $whitelisted = WhitelistedUser::active()->where('email', $email)->first();
         $existingUser = User::where('email', $email)->first();
