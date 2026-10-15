@@ -106,6 +106,11 @@ class User extends Authenticatable
         return $this->hasMany(TeamSecretariat::class);
     }
 
+    public function qmsOrganizationMemberships(): HasMany
+    {
+        return $this->hasMany(QmsOrganizationMember::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === UserRole::ADMIN;

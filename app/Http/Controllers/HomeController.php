@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\QmsOrganizationRole;
 use App\Models\FunctionalDiv;
 use App\Models\ProcessGroup;
+use App\Models\QmsOrganizationMember;
 use App\Models\Team;
 
 class HomeController extends Controller
@@ -24,6 +26,31 @@ class HomeController extends Controller
     }
 
     public function organization()
+    {
+        $roleOrder = [
+            QmsOrganizationRole::SDS->value => 1,
+            QmsOrganizationRole::ASDS->value => 2,
+            QmsOrganizationRole::QMR->value => 3,
+            QmsOrganizationRole::SECRETARIAT_TEAM_LEAD->value => 4,
+            QmsOrganizationRole::SECRETARIAT_TEAM_MEMBER->value => 5,
+        ];
+
+        $members = QmsOrganizationMember::query()
+            ->with('user.position')
+            ->get()
+            ->sortBy(fn (QmsOrganizationMember $member): array => [
+                $roleOrder[$member->role->value] ?? 99,
+                $member->display_order,
+                $member->id,
+            ])
+            ->values();
+
+        $membersByRole = $members->groupBy(fn (QmsOrganizationMember $member): string => $member->role->value);
+
+        return view('pages.qms-organization', compact('membersByRole'));
+    }
+
+    public function teams()
     {
         $teams = Team::query()
             ->withCount([

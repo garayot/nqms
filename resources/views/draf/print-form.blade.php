@@ -304,9 +304,11 @@
                 <td colspan="10">
                     @php
                         $docName = strtolower((string) ($draf->documentType?->name ?? ''));
+                        $isOperationsManual = str_contains($docName, 'operations manual') || str_contains($docName, 'operations');
+                        $isFormTemplate = (str_contains($docName, 'form') || str_contains($docName, 'template')) && ! $isOperationsManual;
                     @endphp
                     <div class="doc-type-row">
-                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'form') || str_contains($docName, 'template') ? '/' : '' }}</span>Form/Template</span>
+                        <span class="inline"><span class="checkbox">{{ $isFormTemplate ? '/' : '' }}</span>Form/Template</span>
                         <span class="inline"><span class="checkbox">{{ str_contains($docName, 'qms') ? '/' : '' }}</span>QMS Manual</span>
                         <span class="inline"><span class="checkbox">{{ str_contains($docName, 'pawim') ? '/' : '' }}</span>PAWIM</span>
                     </div>
@@ -314,7 +316,7 @@
                         <span class="inline"><span class="checkbox">{{ str_contains($docName, 'planning') || str_contains($docName, 'swot') || str_contains($docName, 'risk') || str_contains($docName, 'opcr') ? '/' : '' }}</span>Planning Documents (SWOT, Risk Registry, Opportunity Registry, Relevant Interested Parties, OPCR)</span>
                     </div>
                     <div class="doc-type-row">
-                        <span class="inline"><span class="checkbox">{{ str_contains($docName, 'operations') || str_contains($docName, 'manual') ? '/' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span>
+                        <span class="inline"><span class="checkbox">{{ $isOperationsManual ? '/' : '' }}</span>Operations Manual (Title Page, Introduction, Terms and Acronyms, Legal Bases, Forms/Templates)</span>
                     </div>
                     <div class="doc-type-row" style="margin-bottom: 0;">
                         <span class="inline"><span class="checkbox">{{ str_contains($docName, 'quality') || str_contains($docName, 'control') ? '/' : '' }}</span>Quality Control Plan</span>

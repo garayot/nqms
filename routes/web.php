@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PlanningDocController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProcessController;
 use App\Http\Controllers\Admin\ProcessGroupController;
+use App\Http\Controllers\Admin\QmsOrganizationController;
 use App\Http\Controllers\Admin\SubProcessController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TeamLeadController;
@@ -31,7 +32,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/qps', [HomeController::class, 'qps'])->name('qps');
 Route::get('/links', [HomeController::class, 'links'])->name('links');
 Route::get('/organization', [HomeController::class, 'organization'])->name('organization');
-Route::get('/organization/{team}', [TeamController::class, 'show'])->name('organization.show');
+Route::get('/qms-teams', [HomeController::class, 'teams'])->name('organization.teams');
+Route::get('/qms-teams/{team}', [TeamController::class, 'show'])->name('organization.show');
 Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
@@ -93,6 +95,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
         Route::post('/{team}/secretariat', [TeamSecretariatController::class, 'store'])->name('secretariat.store');
         Route::delete('/{team}/secretariat/{teamSecretariat}', [TeamSecretariatController::class, 'destroy'])->name('secretariat.destroy');
+    });
+
+    Route::prefix('qms-organization')->name('qms-organization.')->group(function (): void {
+        Route::get('/', [QmsOrganizationController::class, 'index'])->name('index');
+        Route::post('/', [QmsOrganizationController::class, 'store'])->name('store');
+        Route::delete('/{qmsOrganizationMember}', [QmsOrganizationController::class, 'destroy'])->name('destroy');
     });
 
     Route::get('/form-templates', [FormTemplateController::class, 'index'])->name('form-templates.index');
