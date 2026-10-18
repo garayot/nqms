@@ -17,7 +17,7 @@ class FormTemplateController extends Controller
 {
     public function index(Request $request)
     {
-        $templates = FormTemplate::query()
+        $query = FormTemplate::query()
             ->with(['documentType', 'uploader'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($sub) use ($search) {
@@ -34,9 +34,21 @@ class FormTemplateController extends Controller
                 });
             })
             ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+            ->when($request->filled('division'), fn ($query) => $query->where('responsible', $request->string('division')->value()))
+            ->when($request->filled('office'), fn ($query) => $query->where('document_location', $request->string('office')->value()));
+
+        $templates = (clone $query)
             ->latest()
             ->paginate(12)
             ->withQueryString();
+
+        $folderTotals = (clone $query)
+            ->selectRaw('responsible, document_location, COUNT(*) as total')
+            ->groupBy('responsible', 'document_location')
+            ->get()
+            ->groupBy('responsible')
+            ->map(fn ($items) => $items->pluck('total', 'document_location')->all())
+            ->all();
 
         $registeredDocuments = Document::query()
             ->with(['draf.documentType', 'originatingOffice'])
@@ -62,11 +74,22 @@ class FormTemplateController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $folderDivisions = FuncDiv::query()
+            ->whereIn('name', ['OSDS', 'CID', 'SGOD'])
+            ->orderBy('name')
+            ->get(['name']);
+
+        if ($folderDivisions->isEmpty()) {
+            $folderDivisions = FuncDiv::query()
+                ->orderBy('name')
+                ->get(['name']);
+        }
+
         $statusOptions = collect(DocumentStatus::cases())
             ->mapWithKeys(fn (DocumentStatus $status) => [$status->value => $status->label()])
             ->all();
 
-        return view('admin.form-templates.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments', 'importedReferenceCodes', 'functionalDivisions', 'offices'));
+        return view('admin.iso-portal.index', compact('templates', 'statusOptions', 'documentTypes', 'registeredDocuments', 'importedReferenceCodes', 'functionalDivisions', 'folderDivisions', 'folderTotals', 'offices'));
     }
 
     public function store(Request $request)
@@ -299,12 +322,14 @@ class FormTemplateController extends Controller
         }
 
         $attachmentPath = $document->downloadable_doc_path ?: $document->draf?->approved_attachment_url;
-        $responsible = $document->originatingOffice?->functionalDivLookup?->name
-            ?? $document->draf?->requestedBy?->functionalDivLookup?->name
-            ?? $document->originatingOffice?->office
+        $responsible = $document->draf?->requestedBy?->functionalDivLookup?->name
+            ?? $document->originatingOffice?->functionalDivLookup?->name
+            ?? $document->draf?->requestedBy?->officeLookup?->name
+            ?? 'Unassigned';
+        $documentLocation = $document->draf?->requestedBy?->officeLookup?->name
+            ?? $document->originatingOffice?->officeLookup?->name
             ?? $document->draf?->requestedBy?->office
-            ?? $document->draf?->requestedBy?->name
-            ?? 'N/A';
+            ?? 'Unassigned';
 
         $template = FormTemplate::firstOrNew([
             'document_reference_code' => $referenceCode,
@@ -317,7 +342,7 @@ class FormTemplateController extends Controller
             ?? $document->draf?->current_revision_no;
         $template->effectivity_date = $document->draf?->effectivity_date
             ?? $document->draf?->date_requested;
-        $template->document_location = $document->location ?? 'Repository';
+        $template->document_location = $documentLocation;
         $template->status = $document->status?->value ?? DocumentStatus::ACTIVE->value;
         $template->downloadable_attachment_path = $attachmentPath;
         $template->created_by = request()->user()->id;

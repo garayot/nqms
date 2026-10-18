@@ -36,7 +36,7 @@
                     <a href="{{ route('admin.planning-docs.index') }}" class="{{ request()->routeIs('admin.planning-docs.*') ? $activeLinkClass : $defaultLinkClass }}">Planning Docs</a>
                     <a href="{{ route('admin.operations-manual.index') }}" class="{{ request()->routeIs('admin.operations-manual.*') ? $activeLinkClass : $defaultLinkClass }}">Operations Manual</a>
                     <a href="{{ route('admin.nqms-manuals.index') }}" class="{{ request()->routeIs('admin.nqms-manuals.*') ? $activeLinkClass : $defaultLinkClass }}">NQMS Manual</a>
-                    <a href="{{ route('admin.form-templates.index') }}" class="{{ request()->routeIs('admin.form-templates.*') ? $activeLinkClass : $defaultLinkClass }}">Forms and Templates</a>
+                    <a href="{{ route('admin.iso-portal.index') }}" class="{{ request()->routeIs('admin.iso-portal.*', 'admin.form-templates.*') ? $activeLinkClass : $defaultLinkClass }}">ISO Portal Management</a>
                     <a href="{{ route('admin.qms-teams.index') }}" class="{{ request()->routeIs('admin.qms-teams.*') ? $activeLinkClass : $defaultLinkClass }}">QMS Teams</a>
                 </div>
             </div>
@@ -56,15 +56,15 @@
                     <a href="{{ route('admin.func-divs.index') }}" class="{{ request()->routeIs('admin.func-divs.*') ? $activeLinkClass : $defaultLinkClass }}">Functional Divisions</a>
                     <a href="{{ route('admin.offices.index') }}" class="{{ request()->routeIs('admin.offices.*') ? $activeLinkClass : $defaultLinkClass }}">Offices</a>
                     <a href="{{ route('admin.positions.index') }}" class="{{ request()->routeIs('admin.positions.*') ? $activeLinkClass : $defaultLinkClass }}">Positions</a>
-                    <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? $activeLinkClass : $defaultLinkClass }}">Users</a>
-                    <a href="{{ route('admin.whitelist.index') }}" class="{{ request()->routeIs('admin.whitelist.*') ? $activeLinkClass : $defaultLinkClass }}">Whitelist</a>
+                    <a href="{{ route('admin.reasons.index') }}" class="{{ request()->routeIs('admin.reasons.*') ? $activeLinkClass : $defaultLinkClass }}">Reasons</a>
                 </div>
             </div>
 
             <div>
                 <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Settings</div>
                 <div class="space-y-1">
-                    <a href="{{ route('admin.reasons.index') }}" class="{{ request()->routeIs('admin.reasons.*') ? $activeLinkClass : $defaultLinkClass }}">Reasons</a>
+                    <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? $activeLinkClass : $defaultLinkClass }}">Users</a>
+                    <a href="{{ route('admin.whitelist.index') }}" class="{{ request()->routeIs('admin.whitelist.*') ? $activeLinkClass : $defaultLinkClass }}">Whitelist</a>
                 </div>
             </div>
         @endif

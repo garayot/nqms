@@ -64,10 +64,10 @@ class PublicFileAccessController extends Controller
 
     private function redirectToTarget(string $targetUrl): RedirectResponse
     {
-        if (auth()->guest()) {
+        if (request()->user() === null) {
             return redirect()
                 ->guest(route('login.google'))
-                ->with('error', 'Please log in to view or download this file.');
+                ->with('auth_required', 'Please log in to view or download repository files.');
         }
 
         if (Str::startsWith($targetUrl, ['http://', 'https://'])) {

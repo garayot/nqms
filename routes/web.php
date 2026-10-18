@@ -110,6 +110,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
 
     Route::get('/form-templates', [FormTemplateController::class, 'index'])->name('form-templates.index');
+    Route::get('/iso-portal', [FormTemplateController::class, 'index'])->name('iso-portal.index');
     Route::get('/form-templates/csv-template', [FormTemplateController::class, 'downloadCsvTemplate'])->name('form-templates.csv-template');
     Route::post('/form-templates', [FormTemplateController::class, 'store'])->name('form-templates.store');
     Route::post('/form-templates/import-csv', [FormTemplateController::class, 'importCsv'])->name('form-templates.import-csv');

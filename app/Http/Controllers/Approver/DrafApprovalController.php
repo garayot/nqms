@@ -10,8 +10,10 @@ use App\Http\Requests\ApproveDrafRequest;
 use App\Models\Document;
 use App\Models\Draf;
 use App\Models\DrafHistory;
+use App\Models\FormTemplate;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DrafApprovalController extends Controller
 {
@@ -59,6 +61,12 @@ class DrafApprovalController extends Controller
         $validated = $request->validated();
         $oldStatus = $draf->status?->value;
 
+        $draf->loadMissing([
+            'documentType',
+            'requestedBy.functionalDivLookup',
+            'requestedBy.officeLookup',
+        ]);
+
         $draf->approval = $validated['approval'];
         $draf->reason2 = $validated['reason2'] ?? null;
         $draf->approved_by = $validated['approved_by'];
@@ -81,6 +89,23 @@ class DrafApprovalController extends Controller
                 $document->downloadable_doc_path = $validated['approved_attachment_url'];
                 $document->location = 'Repository';
                 $document->save();
+
+                if (Str::lower((string) $draf->documentType?->name) === 'forms/template') {
+                    FormTemplate::updateOrCreate(
+                        ['document_reference_code' => $draf->reference_code],
+                        [
+                            'document_type_id' => $draf->doc_type_id,
+                            'doc_title' => $draf->title,
+                            'responsible' => $draf->requestedBy?->functionalDivLookup?->name ?? 'Unassigned',
+                            'revision_number' => $draf->new_revision_number ?? $draf->current_revision_no,
+                            'effectivity_date' => $draf->effectivity_date ?? $draf->date_requested,
+                            'document_location' => $draf->requestedBy?->officeLookup?->name ?? 'Unassigned',
+                            'status' => 'active',
+                            'downloadable_attachment_path' => $validated['approved_attachment_url'],
+                            'created_by' => $validated['approved_by'],
+                        ],
+                    );
+                }
             }
         } else {
             $draf->status = DrafStatus::APPROVAL_DISAPPROVED->value;
