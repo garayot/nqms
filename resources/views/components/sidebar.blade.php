@@ -21,6 +21,13 @@
             </div>
         </div>
 
+        <div>
+            <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Shortcuts</div>
+            <div class="space-y-1">
+                <a href="https://depedph-my.sharepoint.com/:f:/g/personal/willy_dumpit001_deped_gov_ph/IgBBtP_jP-ZfT4qxTi4J7N3NAeBg77coDWKEmrZmo9_SYIA?e=fiOURx" target="_blank" class="{{ $defaultLinkClass }}">NQMS Documents</a>
+            </div>
+        </div>
+
         @if (auth()->user()?->isAdmin())
             <div>
                 <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">QMS Library</div>
