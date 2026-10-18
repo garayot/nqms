@@ -1,4 +1,11 @@
 <header class="relative z-50 isolate w-full border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur">
+    @php
+        $navDefaultClass = 'whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]';
+        $navActiveClass = 'whitespace-nowrap rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-[#0f3d68]';
+        $mobileDefaultClass = 'rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]';
+        $mobileActiveClass = 'rounded-md bg-slate-100 px-3 py-2 text-[#0f3d68]';
+    @endphp
+
     <nav class="relative flex w-full items-center px-4 py-4 sm:px-6 lg:px-8 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-8">
         <a href="{{ route('home') }}" class="flex flex-none items-center gap-3 md:justify-self-start">
             <img src="{{ Storage::url('logo/Bislig SDO logo.png') }}" alt="Bislig SDO logo" class="h-12 w-12 rounded-full object-cover">
@@ -11,7 +18,7 @@
 
         <div class="hidden min-w-0 items-center justify-center gap-2 text-sm font-medium text-slate-700 md:flex md:w-full md:flex-wrap md:justify-center lg:gap-4 xl:gap-6">
             <div class="relative flex items-center gap-1 px-1 py-1 group">
-                <a href="{{ route('home') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]" aria-haspopup="true">Home</a>
+                <a href="{{ route('home') }}" class="{{ request()->routeIs('home', 'organization', 'qps') ? $navActiveClass : $navDefaultClass }}" aria-haspopup="true">Home</a>
                 <button type="button" class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700" aria-label="Show Home submenu">
                     <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 12 12">
                         <path d="M10 3.586 11.414 5 6 10.414.586 5 2 3.586l4 4z" />
@@ -20,22 +27,22 @@
 
                 <ul class="invisible absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                     <li>
-                        <a href="{{ route('organization') }}" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]">QMS Org Chart</a>
+                        <a href="{{ route('organization') }}" class="{{ request()->routeIs('organization') ? 'block rounded-md bg-slate-50 px-3 py-2 text-[#0f3d68]' : 'block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]' }}">QMS Org Chart</a>
                     </li>
                     <li>
-                        <a href="{{ route('qps') }}" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]">QPS</a>
+                        <a href="{{ route('qps') }}" class="{{ request()->routeIs('qps') ? 'block rounded-md bg-slate-50 px-3 py-2 text-[#0f3d68]' : 'block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-[#0f3d68]' }}">QPS</a>
                     </li>
                 </ul>
             </div>
-            <a href="{{ route('nqms-manuals.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">NQMS Manual</a>
-            <a href="{{ route('planning-docs') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Planning Docs</a>
-            <a href="{{ route('operations-manual') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Operations Manual</a>
-            <a href="{{ route('forms.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Forms and Templates</a>
-            <a href="{{ route('links') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Links</a>
-            <a href="{{ route('organization.teams') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">QMS Team</a>
-            <a href="#" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">ISO Portal</a>
+            <a href="{{ route('nqms-manuals.index') }}" class="{{ request()->routeIs('nqms-manuals.*') ? $navActiveClass : $navDefaultClass }}">NQMS Manual</a>
+            <a href="{{ route('planning-docs') }}" class="{{ request()->routeIs('planning-docs') ? $navActiveClass : $navDefaultClass }}">Planning Docs</a>
+            <a href="{{ route('operations-manual') }}" class="{{ request()->routeIs('operations-manual') ? $navActiveClass : $navDefaultClass }}">Operations Manual</a>
+            <a href="{{ route('forms.index') }}" class="{{ request()->routeIs('forms.*') ? $navActiveClass : $navDefaultClass }}">Forms and Templates</a>
+            <a href="{{ route('links') }}" class="{{ request()->routeIs('links') ? $navActiveClass : $navDefaultClass }}">Links</a>
+            <a href="{{ route('organization.teams') }}" class="{{ request()->routeIs('organization.teams', 'organization.show') ? $navActiveClass : $navDefaultClass }}">QMS Team</a>
+            <a href="#" class="{{ $navDefaultClass }}">ISO Portal</a>
             @auth
-                <a href="{{ route('dashboard') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? $navActiveClass : $navDefaultClass }}">Dashboard</a>
                 <!-- <a href="{{ route('draf.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">DRAF / Document Management</a> -->
             @endauth
         </div>
@@ -51,18 +58,18 @@
 
                 <div class="absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border border-slate-200 bg-white p-2 shadow-lg ring-1 ring-slate-200/60">
                     <div class="flex flex-col text-sm font-medium text-slate-700">
-                        <a href="{{ route('home') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Home</a>
-                        <a href="{{ route('organization') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QMS Org Chart</a>
-                        <a href="{{ route('qps') }}" class="ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]">↳ QPS</a>
-                        <a href="{{ route('nqms-manuals.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">NQMS Manual</a>
-                        <a href="{{ route('planning-docs') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Planning Docs</a>
-                        <a href="{{ route('operations-manual') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Operations Manual</a>
-                        <a href="{{ route('forms.index') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Forms and Templates</a>
-                        <a href="{{ route('links') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Links</a>
-                        <a href="{{ route('organization.teams') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">QMS Team</a>
-                        <a href="#" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">ISO Portal</a>
+                        <a href="{{ route('home') }}" class="{{ request()->routeIs('home', 'organization', 'qps') ? $mobileActiveClass : $mobileDefaultClass }}">Home</a>
+                        <a href="{{ route('organization') }}" class="{{ request()->routeIs('organization') ? 'ml-4 rounded-md bg-slate-100 px-3 py-2 text-xs text-[#0f3d68]' : 'ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]' }}">↳ QMS Org Chart</a>
+                        <a href="{{ route('qps') }}" class="{{ request()->routeIs('qps') ? 'ml-4 rounded-md bg-slate-100 px-3 py-2 text-xs text-[#0f3d68]' : 'ml-4 rounded-md px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 hover:text-[#0f3d68]' }}">↳ QPS</a>
+                        <a href="{{ route('nqms-manuals.index') }}" class="{{ request()->routeIs('nqms-manuals.*') ? $mobileActiveClass : $mobileDefaultClass }}">NQMS Manual</a>
+                        <a href="{{ route('planning-docs') }}" class="{{ request()->routeIs('planning-docs') ? $mobileActiveClass : $mobileDefaultClass }}">Planning Docs</a>
+                        <a href="{{ route('operations-manual') }}" class="{{ request()->routeIs('operations-manual') ? $mobileActiveClass : $mobileDefaultClass }}">Operations Manual</a>
+                        <a href="{{ route('forms.index') }}" class="{{ request()->routeIs('forms.*') ? $mobileActiveClass : $mobileDefaultClass }}">Forms and Templates</a>
+                        <a href="{{ route('links') }}" class="{{ request()->routeIs('links') ? $mobileActiveClass : $mobileDefaultClass }}">Links</a>
+                        <a href="{{ route('organization.teams') }}" class="{{ request()->routeIs('organization.teams', 'organization.show') ? $mobileActiveClass : $mobileDefaultClass }}">QMS Team</a>
+                        <a href="#" class="{{ $mobileDefaultClass }}">ISO Portal</a>
                         @auth
-                            <a href="{{ route('dashboard') }}" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-[#0f3d68]">Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? $mobileActiveClass : $mobileDefaultClass }}">Dashboard</a>
                             <div class="my-1 border-t border-slate-200"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
