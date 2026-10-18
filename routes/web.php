@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProcessController;
 use App\Http\Controllers\Admin\ProcessGroupController;
 use App\Http\Controllers\Admin\QmsOrganizationController;
+use App\Http\Controllers\Admin\ReasonController;
 use App\Http\Controllers\Admin\SubProcessController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TeamLeadController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DrafController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicFileAccessController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +68,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -77,6 +82,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/drafs/{draf}/review', [DrafManagementController::class, 'review'])->name('drafs.review');
 
     Route::resource('positions', PositionController::class)->except(['show']);
+    Route::resource('reasons', ReasonController::class)->except(['show']);
 
     Route::prefix('qms-teams')->name('qms-teams.')->group(function (): void {
         Route::get('/', [TeamController::class, 'index'])->name('index');

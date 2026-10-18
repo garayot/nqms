@@ -9,6 +9,13 @@
             </div>
         </div>
 
+        <div>
+            <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Profile</div>
+            <div class="space-y-1">
+                <a href="{{ route('profile.edit') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Manage Profile</a>
+            </div>
+        </div>
+
         @if (auth()->user()?->isAdmin())
             <div>
                 <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">QMS Library</div>
@@ -39,6 +46,13 @@
                     <a href="{{ route('admin.positions.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Positions</a>
                     <a href="{{ route('admin.users.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Users</a>
                     <a href="{{ route('admin.whitelist.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Whitelist</a>
+                </div>
+            </div>
+
+            <div>
+                <div class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Settings</div>
+                <div class="space-y-1">
+                    <a href="{{ route('admin.reasons.index') }}" class="block rounded-lg border border-transparent px-3 py-2 whitespace-nowrap hover:border-slate-200 hover:bg-slate-100 hover:text-[#0f3d68]">Reasons</a>
                 </div>
             </div>
         @endif
