@@ -9,7 +9,31 @@
         $activeFolderClass = 'flex items-center justify-between gap-3 rounded-xl border border-[#0f3d68] bg-[#0f3d68]/5 px-3 py-2.5 text-sm font-semibold text-[#0f3d68]';
     @endphp
 
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <style>
+        .folder-panel {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-4px);
+            transition: max-height 320ms ease, opacity 240ms ease, transform 320ms ease;
+            will-change: max-height, opacity, transform;
+        }
+
+        .folder-panel.is-open {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .folder-chevron {
+            transition: transform 240ms ease;
+        }
+
+        .folder-toggle.is-open .folder-chevron {
+            transform: rotate(90deg);
+        }
+    </style>
+
+    <div class="mx-auto max-w-7xl overflow-x-hidden px-3 py-10 sm:px-6 lg:px-8">
         <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Public Repository</p>
@@ -34,8 +58,8 @@
         </div>
 
         <div class="grid gap-6 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
-            <div class="space-y-6">
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="min-w-0 space-y-6">
+                <div class="w-full max-w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:overflow-y-auto">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <h2 class="text-xl font-semibold text-slate-900">Folder Directory</h2>
@@ -43,82 +67,98 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 space-y-4">
-                        <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'search' => $search]) }}" class="flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition {{ $folder === 'osd' ? 'border-[#0f3d68] bg-[#0f3d68]/5 text-[#0f3d68]' : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300 hover:bg-slate-100' }}">
-                            <span class="flex items-center gap-3 font-semibold">
-                                <span class="text-xl">📁</span>
-                                <span>OSD</span>
-                            </span>
-                            <span class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">Root</span>
-                        </a>
+                    <div class="mt-6 space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'search' => $search]) }}" class="flex min-w-0 flex-1 items-center gap-3 font-semibold text-slate-900 hover:text-[#0f3d68]">
+                                    <span class="text-xl">📁</span>
+                                    <span>OSD</span>
+                                </a>
+                                <button
+                                    type="button"
+                                    class="folder-toggle flex items-center gap-3 rounded-lg px-2 py-1 text-left"
+                                    data-collapsible-toggle="root"
+                                    aria-expanded="false"
+                                    aria-label="Toggle OSD folder"
+                                >
+                                    <span class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">Root</span>
+                                    <svg class="folder-chevron h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.23 4.21a.75.75 0 0 1 1.06.02l4.25 4.5a.75.75 0 0 1 0 1.04l-4.25 4.5a.75.75 0 1 1-1.08-1.04L10.91 9 7.21 4.27a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
 
-                        @if ($folder === 'osd')
-                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                <div class="mb-3 flex items-center justify-between gap-3">
-                                    <div>
-                                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Subfolders</p>
-                                        <h3 class="mt-1 text-sm font-semibold text-slate-900">Functional Divisions</h3>
+                            <div class="folder-panel mt-4 pl-1 {{ $folder === 'osd' ? 'is-open' : '' }}" data-collapsible-panel="root">
+                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                                    <div class="mb-3 flex items-center justify-between gap-3">
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Subfolders</p>
+                                            <h3 class="mt-1 text-sm font-semibold text-slate-900">Functional Divisions</h3>
+                                        </div>
+                                        @if (filled($division))
+                                            <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'search' => $search]) }}" class="text-xs font-semibold text-[#0f3d68] hover:underline">Clear</a>
+                                        @endif
                                     </div>
-                                    @if (filled($division))
-                                        <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'search' => $search]) }}" class="text-xs font-semibold text-[#0f3d68] hover:underline">Clear</a>
-                                    @endif
-                                </div>
 
-                                <div class="space-y-2">
-                                    @forelse ($availableDivisions as $availableDivision)
-                                        @php
-                                            $divisionFileCount = (int) ($divisionCounts[$availableDivision] ?? 0);
-                                        @endphp
-                                        <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'division' => $availableDivision, 'search' => $search]) }}" class="{{ $division === $availableDivision ? $activeFolderClass : $divisionFolderClass }}">
-                                            <span class="flex items-center gap-3">
-                                                <span class="text-lg">📁</span>
-                                                <span>{{ $availableDivision }}</span>
-                                            </span>
-                                            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ $divisionFileCount }}</span>
-                                        </a>
-                                    @empty
-                                        <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm text-slate-500">No functional divisions found.</div>
-                                    @endforelse
+                                    <div class="space-y-2">
+                                        @forelse ($availableDivisions as $availableDivision)
+                                            @php
+                                                $divisionFileCount = (int) ($divisionCounts[$availableDivision] ?? 0);
+                                            @endphp
+
+                                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-2">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'division' => $availableDivision, 'search' => $search]) }}" class="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-2 py-1.5 font-semibold {{ $division === $availableDivision ? 'text-[#0f3d68]' : 'text-slate-900 hover:text-[#0f3d68]' }}">
+                                                        <span class="text-lg">📁</span>
+                                                        <span>{{ $availableDivision }}</span>
+                                                    </a>
+                                                    <button
+                                                        type="button"
+                                                        class="folder-toggle flex items-center gap-3 rounded-lg px-2 py-1 text-left"
+                                                        data-collapsible-toggle="division-{{ \Illuminate\Support\Str::slug($availableDivision) }}"
+                                                        aria-expanded="{{ $division === $availableDivision ? 'true' : 'false' }}"
+                                                        aria-label="Toggle {{ $availableDivision }} folder"
+                                                    >
+                                                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ $divisionFileCount }}</span>
+                                                        <svg class="folder-chevron h-4 w-4 text-slate-500 {{ $division === $availableDivision ? 'rotate-90' : '' }}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                            <path fill-rule="evenodd" d="M7.23 4.21a.75.75 0 0 1 1.06.02l4.25 4.5a.75.75 0 0 1 0 1.04l-4.25 4.5a.75.75 0 1 1-1.08-1.04L10.91 9 7.21 4.27a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+
+                                                <div class="folder-panel mt-2 pl-4 {{ $division === $availableDivision ? 'is-open' : '' }}" data-collapsible-panel="division-{{ \Illuminate\Support\Str::slug($availableDivision) }}">
+                                                    <div class="space-y-2 max-h-64 overflow-y-auto pr-1">
+                                                        @forelse ($officeFolders as $officeFolder)
+                                                            @php
+                                                                $officeFileCount = (int) ($officeCounts[$officeFolder] ?? 0);
+                                                            @endphp
+
+                                                            <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'division' => $availableDivision, 'office' => $officeFolder, 'search' => $search]) }}" class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 {{ $office === $officeFolder ? 'border-[#0f3d68] bg-[#0f3d68]/5 text-[#0f3d68]' : '' }}">
+                                                                <span class="flex items-center gap-3">
+                                                                    <span class="text-base">📄</span>
+                                                                    <span>{{ $officeFolder }}</span>
+                                                                </span>
+                                                                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ $officeFileCount }}</span>
+                                                            </a>
+                                                        @empty
+                                                            <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm text-slate-500">No office folders found in this division.</div>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm text-slate-500">No functional divisions found.</div>
+                                        @endforelse
+                                    </div>
                                 </div>
                             </div>
-                        @endif
-
-                        @if (filled($division))
-                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                <div class="mb-3 flex items-center justify-between gap-3">
-                                    <div>
-                                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Subfolders</p>
-                                        <h3 class="mt-1 text-sm font-semibold text-slate-900">Office Folders</h3>
-                                    </div>
-                                    @if (filled($office))
-                                        <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'division' => $division, 'search' => $search]) }}" class="text-xs font-semibold text-[#0f3d68] hover:underline">Clear</a>
-                                    @endif
-                                </div>
-
-                                <div class="space-y-2">
-                                    @forelse ($officeFolders as $officeFolder)
-                                        @php
-                                            $officeFileCount = (int) ($officeCounts[$officeFolder] ?? 0);
-                                        @endphp
-                                        <a href="{{ route('iso-portal.index', ['folder' => 'osd', 'division' => $division, 'office' => $officeFolder, 'search' => $search]) }}" class="{{ $office === $officeFolder ? $activeFolderClass : $divisionFolderClass }}">
-                                            <span class="flex items-center gap-3">
-                                                <span class="text-lg">📄</span>
-                                                <span>{{ $officeFolder }}</span>
-                                            </span>
-                                            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ $officeFileCount }}</span>
-                                        </a>
-                                    @empty
-                                        <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm text-slate-500">No office folders found in this division.</div>
-                                    @endforelse
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="min-w-0 space-y-6">
+                <div class="w-full max-w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                             <h2 class="text-xl font-semibold text-slate-900">Document List</h2>
@@ -217,4 +257,60 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (() => {
+            const panels = new Map();
+
+            const setPanelState = (panel, open) => {
+                if (!panel) {
+                    return;
+                }
+
+                if (open) {
+                    panel.classList.add('is-open');
+                    panel.style.maxHeight = `${panel.scrollHeight}px`;
+                } else {
+                    panel.style.maxHeight = `${panel.scrollHeight}px`;
+                    window.requestAnimationFrame(() => {
+                        panel.classList.remove('is-open');
+                        panel.style.maxHeight = '0px';
+                    });
+                }
+            };
+
+            document.querySelectorAll('[data-collapsible-panel]').forEach((panel) => {
+                panels.set(panel.dataset.collapsiblePanel, panel);
+
+                if (panel.classList.contains('is-open')) {
+                    panel.style.maxHeight = `${panel.scrollHeight}px`;
+                }
+            });
+
+            document.querySelectorAll('[data-collapsible-toggle]').forEach((toggle) => {
+                toggle.addEventListener('click', (event) => {
+                    const targetId = toggle.dataset.collapsibleToggle;
+                    const panel = panels.get(targetId);
+
+                    if (!panel) {
+                        return;
+                    }
+
+                    const isOpen = panel.classList.contains('is-open');
+                    setPanelState(panel, !isOpen);
+                    toggle.classList.toggle('is-open', !isOpen);
+                    toggle.setAttribute('aria-expanded', String(!isOpen));
+                    event.preventDefault();
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                panels.forEach((panel) => {
+                    if (panel.classList.contains('is-open')) {
+                        panel.style.maxHeight = `${panel.scrollHeight}px`;
+                    }
+                });
+            });
+        })();
+    </script>
 @endsection
