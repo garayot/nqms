@@ -13,6 +13,87 @@ use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
+    public function isoPortal(Request $request)
+    {
+        $search = $request->string('search')->value();
+        $folder = strtolower($request->string('folder')->value());
+        $division = $request->string('division')->value();
+        $office = $request->string('office')->value();
+
+        $divisionFolders = collect(['OSDS', 'CID', 'SGOD']);
+
+        $portalQuery = FormTemplate::query()
+            ->with(['documentType', 'uploader'])
+            ->where('status', DocumentStatus::ACTIVE->value)
+            ->when(filled($division), fn ($query) => $query->where('responsible', $division))
+            ->when(filled($office), fn ($query) => $query->where('document_location', $office))
+            ->when(filled($search), function ($query) use ($search): void {
+                $query->where(function ($sub) use ($search): void {
+                    $sub->where('document_reference_code', 'like', "%{$search}%")
+                        ->orWhere('doc_title', 'like', "%{$search}%")
+                        ->orWhere('responsible', 'like', "%{$search}%")
+                        ->orWhere('document_location', 'like', "%{$search}%")
+                        ->orWhereHas('uploader', function ($uploaderQuery) use ($search): void {
+                            $uploaderQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            });
+
+        $documents = (clone $portalQuery)
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        $availableDivisions = FuncDiv::query()
+            ->whereIn('name', $divisionFolders->all())
+            ->orderByRaw("FIELD(name, 'OSDS', 'CID', 'SGOD')")
+            ->pluck('name')
+            ->values();
+
+        if ($availableDivisions->isEmpty()) {
+            $availableDivisions = FuncDiv::query()
+                ->orderBy('name')
+                ->pluck('name')
+                ->values();
+        }
+
+        $officeFolders = filled($division)
+            ? (clone $portalQuery)
+                ->whereNotNull('document_location')
+                ->distinct()
+                ->orderBy('document_location')
+                ->pluck('document_location')
+                ->values()
+            : collect();
+
+        $divisionCounts = (clone FormTemplate::query())
+            ->where('status', DocumentStatus::ACTIVE->value)
+            ->selectRaw('responsible, COUNT(*) as total')
+            ->groupBy('responsible')
+            ->pluck('total', 'responsible');
+
+        $officeCounts = filled($division)
+            ? (clone FormTemplate::query())
+                ->where('status', DocumentStatus::ACTIVE->value)
+                ->where('responsible', $division)
+                ->selectRaw('document_location, COUNT(*) as total')
+                ->groupBy('document_location')
+                ->pluck('total', 'document_location')
+            : collect();
+
+        return view('pages.iso-portal-index', compact(
+            'availableDivisions',
+            'divisionCounts',
+            'division',
+            'documents',
+            'folder',
+            'office',
+            'officeCounts',
+            'officeFolders',
+            'search',
+        ));
+    }
+
     public function publicPrint(Request $request)
     {
         $documents = FormTemplate::query()

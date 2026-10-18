@@ -118,7 +118,10 @@
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h2 class="text-xl font-semibold text-slate-900">Add Form / Template</h2>
                     <p class="mt-1 text-sm text-slate-600">Save a form/template directly into a selected folder.</p>
 
@@ -199,7 +202,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
 
             <div class="space-y-6">
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

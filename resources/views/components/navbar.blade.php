@@ -40,7 +40,7 @@
             <a href="{{ route('forms.index') }}" class="{{ request()->routeIs('forms.*') ? $navActiveClass : $navDefaultClass }}">Forms and Templates</a>
             <a href="{{ route('links') }}" class="{{ request()->routeIs('links') ? $navActiveClass : $navDefaultClass }}">Links</a>
             <a href="{{ route('organization.teams') }}" class="{{ request()->routeIs('organization.teams', 'organization.show') ? $navActiveClass : $navDefaultClass }}">QMS Team</a>
-            <a href="#" class="{{ $navDefaultClass }}">ISO Portal</a>
+            <a href="{{ route('iso-portal.index') }}" class="{{ request()->routeIs('iso-portal.*') ? $navActiveClass : $navDefaultClass }}">ISO Portal</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? $navActiveClass : $navDefaultClass }}">Dashboard</a>
                 <!-- <a href="{{ route('draf.index') }}" class="whitespace-nowrap rounded-md border border-transparent px-3 py-2 hover:border-slate-200 hover:bg-slate-50 hover:text-[#0f3d68]">DRAF / Document Management</a> -->
@@ -67,7 +67,7 @@
                         <a href="{{ route('forms.index') }}" class="{{ request()->routeIs('forms.*') ? $mobileActiveClass : $mobileDefaultClass }}">Forms and Templates</a>
                         <a href="{{ route('links') }}" class="{{ request()->routeIs('links') ? $mobileActiveClass : $mobileDefaultClass }}">Links</a>
                         <a href="{{ route('organization.teams') }}" class="{{ request()->routeIs('organization.teams', 'organization.show') ? $mobileActiveClass : $mobileDefaultClass }}">QMS Team</a>
-                        <a href="#" class="{{ $mobileDefaultClass }}">ISO Portal</a>
+                        <a href="{{ route('iso-portal.index') }}" class="{{ request()->routeIs('iso-portal.*') ? $mobileActiveClass : $mobileDefaultClass }}">ISO Portal</a>
                         @auth
                             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? $mobileActiveClass : $mobileDefaultClass }}">Dashboard</a>
                             <div class="my-1 border-t border-slate-200"></div>

@@ -39,6 +39,7 @@ Route::get('/qms-teams/{team}', [TeamController::class, 'show'])->name('organiza
 Route::get('/operations-manual', [HomeController::class, 'operationsManual'])->name('operations-manual');
 Route::get('/planning-docs', [HomeController::class, 'planningDocs'])->name('planning-docs');
 Route::get('/forms-templates', [DocumentController::class, 'publicIndex'])->name('forms.index');
+Route::get('/iso-portal', [DocumentController::class, 'isoPortal'])->name('iso-portal.index');
 Route::get('/nqms-manuals', [DocumentController::class, 'publicNqmsManualIndex'])->name('nqms-manuals.index');
 Route::get('/access/forms-templates/{formTemplate}', [PublicFileAccessController::class, 'formTemplate'])->name('public.file-access.form-templates');
 Route::get('/access/nqms-manuals/{nqmsManual}', [PublicFileAccessController::class, 'nqmsManual'])->name('public.file-access.nqms-manuals');
